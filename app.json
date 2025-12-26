@@ -1,0 +1,39 @@
+{
+  "entryPagePath": "pages/login/login",
+  "pages": [
+    "pages/login/login",
+    "pages/taskList/taskList",
+    "pages/taskDetail/taskDetail",
+    "pages/profile/profile"
+  ],
+  "tabBar": {
+    "custom": true,
+    "color": "#7d7e80",
+    "selectedColor": "#1989fa",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "text": "任务",
+        "pagePath": "pages/taskList/taskList",
+        "iconPath": "images/task.png",
+        "selectedIconPath": "images/task-active.png"
+      },
+      {
+        "text": "我的",
+        "pagePath": "pages/profile/profile",
+        "iconPath": "images/user.png",
+        "selectedIconPath": "images/user-active.png"
+      }
+    ]
+  },
+  "renderer": "webview",
+  "componentFramework": "exparser",
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "审批助手",
+    "navigationBarTextStyle": "black"
+  },
+  "plugins": {}
+}

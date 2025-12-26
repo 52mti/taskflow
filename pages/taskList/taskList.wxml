@@ -1,0 +1,37 @@
+<view class="page-wrapper">
+    <view class="fixed-header">
+        <van-search bind:change="onSearchChange" bind:search="onSearch" placeholder="搜索任务名称" value="{{keyword}}"></van-search>
+        <view class="filter-bar">
+            <view bindtap="showCalendar" class="filter-item">
+                <van-icon name="calendar-o"></van-icon>
+                <text>{{formatedDate||'选择日期范围'}}</text>
+                <van-icon catchtap="onClearDate" name="cross" style="margin-left:10rpx" wx:if="{{formatedDate}}"></van-icon>
+            </view>
+            <view bindtap="showStatusPicker" class="filter-item">
+                <van-icon name="filter-o"></van-icon>
+                <text>{{statusLabel||'全部状态'}}</text>
+            </view>
+        </view>
+    </view>
+    <scroll-view scrollY bindscrolltolower="loadMore" class="task-list">
+        <view bindtap="goToDetail" class="card-wrapper" data-form-key="{{item.formKey}}" data-id="{{item.entityId}}" data-process-definition-id="{{item.processDefinitionId}}" data-process-instance-id="{{item.processInstanceId}}" data-status="{{item.state}}" wx:for="{{taskList}}" wx:key="id">
+            <van-card class="my-card">
+                <view class="title-wrapper" slot="title">
+                    <text class="card-title">{{item.name}}</text>
+                    <van-tag customClass="right-top-tag" size="medium" type="{{item.state===0?'warning':'success'}}">{{item.stateName}}</van-tag>
+                </view>
+                <view class="card-content" slot="bottom">
+                    <text>发起人：{{item.initiatorName}}</text>
+                    <text>发布时间：{{item.startTime}}</text>
+                </view>
+            </van-card>
+        </view>
+        <van-empty description="暂无任务" wx:if="{{taskList.length===0&&!loading}}"></van-empty>
+        <view class="loading-text" wx:if="{{loading}}">加载中...</view>
+        <view class="loading-text" wx:if="{{finished&&taskList.length>0}}">没有更多了</view>
+    </scroll-view>
+    <van-calendar allowSameDay bind:close="onCalendarClose" bind:confirm="onCalendarConfirm" color="#1989fa" maxDate="{{maxDate}}" minDate="{{minDate}}" position="bottom" show="{{showCalendar}}" type="range"></van-calendar>
+    <van-popup bind:close="onPickerClose" position="bottom" rootPortal="{{true}}" show="{{showPicker}}" zIndex="9999999">
+        <van-picker showToolbar bind:cancel="onPickerClose" bind:confirm="onPickerConfirm" columns="{{statusColumns}}" title="选择任务状态"></van-picker>
+    </van-popup>
+</view>

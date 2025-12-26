@@ -1,0 +1,54 @@
+<view class="detail-container">
+    <scroll-view scrollY class="scroll-area" wx:if="{{status==='0'}}">
+        <van-cell-group title="{{group.title}}" wx:for="{{detailKeyList}}" wx:for-item="group" wx:key="title">
+            <van-cell title="{{item.title}}" wx:for="{{group.list}}" wx:key="title">
+                <block wx:if="{{item.fileValue}}">
+                    <text bindtap="onClickFile" data-file="{{file}}" name="browsing-history-o" style="color:#1989fa" wx:for="{{item.fileValue}}" wx:for-item="file" wx:key="*this">
+            {{utils.deriveFileName(file)}}
+          </text>
+                </block>
+                <text wx:else>{{item.value}}</text>
+            </van-cell>
+        </van-cell-group>
+        <view class="tabs-area" wx:if="{{tabTableList.length>0}}">
+            <van-tabs animated active="{{activeTab}}" color="#1989fa" ellipsis="{{false}}" wx:if="{{tabTableList.length>=2}}">
+                <van-tab title="{{tab.title}}" wx:for="{{tabTableList}}" wx:for-item="tab" wx:key="title">
+                    <custom-table tableBodyList="{{tab.tableBodyList}}" tableHeadList="{{tab.tableHeadList}}"></custom-table>
+                </van-tab>
+            </van-tabs>
+            <view wx:else>
+                <text class="label">{{tabTableList[0].title}}</text>
+                <custom-table tableBodyList="{{tabTableList[0].tableBodyList}}" tableHeadList="{{tabTableList[0].tableHeadList}}"></custom-table>
+            </view>
+        </view>
+    </scroll-view>
+    <van-goods-action wx:if="{{status==='0'}}">
+        <van-goods-action-button bind:click="clickButton" data-index="{{index}}" plain="{{item.plain}}" text="{{item.text}}" type="{{item.type}}" wx:for="{{btnList}}" wx:key="text"></van-goods-action-button>
+    </van-goods-action>
+    <van-steps active="{{activeStep}}" activeColor="#1989fa" descClass="my-desc-class" direction="vertical" steps="{{steps}}" wx:if="{{status==='1'}}"></van-steps>
+    <van-popup closeable round bind:close="closeWorkflow" position="bottom" show="{{showFlow}}">
+        <view class="popup-title">审批流程</view>
+        <view class="flow-content">
+            <van-steps active="{{activeStep}}" activeColor="#1989fa" descClass="my-desc-class" direction="vertical" inactiveColor="#7d7e80" steps="{{steps}}"></van-steps>
+        </view>
+    </van-popup>
+    <van-dialog showCancelButton useSlot beforeClose="{{handleBeforeClose}}" bind:close="onCancelReject" bind:confirm="onConfirmReject" show="{{showRejectDialog}}" title="驳回原因">
+        <view class="dialog-content">
+            <van-field autoSize adjustPosition="{{true}}" autosize="{{({minHeight:70})}}" border="{{false}}" cursorSpacing="140" focus="{{rejectDialogFocus}}" value="{{rejectReason}}" placeholder="请输入驳回原因" type="textarea"></van-field>
+        </view>
+    </van-dialog>
+    <van-dialog id="van-dialog"></van-dialog>
+    <van-toast id="custom-selector"></van-toast>
+</view>
+
+<wxs module="utils">
+var deriveFileName = (function(url) {
+  if (!url) return ('file');;
+  var parts = url.split('_');
+  var fileName = parts[((nt_0 = (parts.length - 1), null == nt_0 ? undefined : 'number' === typeof nt_0 ? nt_0 : "" + nt_0))];
+  return (fileName || 'file')
+});
+module.exports = ({
+  deriveFileName: deriveFileName,
+});
+</wxs>

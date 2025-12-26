@@ -1,0 +1,85 @@
+.detail-container {
+    background: #f7f8fa;
+    box-sizing: border-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom)
+}
+
+.van-goods-action {
+    padding: 10rpx;
+    position: static!important
+}
+
+.van-goods-action--safe {
+    padding-bottom: 0!important
+}
+
+.my-desc-class {
+    font-size: 26rpx;
+    line-height: 1.5;
+    margin-top: 10rpx;
+    white-space: pre-wrap
+}
+
+.van-step--finish .my-desc-class {
+    color: #7d7e80
+}
+
+.van-step__title {
+    font-size: 30rpx
+}
+
+.scroll-area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: hidden
+}
+
+.label {
+    background-color: #f7f8fa;
+    color: #455a6499;
+    display: block;
+    font-size: 14px;
+    padding-left: 16px;
+    width: 100%
+}
+
+.text-warning {
+    color: #ff976a!important
+}
+
+.text-success {
+    color: #07c160!important
+}
+
+.tabs-area {
+    background: #fff;
+    margin-top: 20rpx
+}
+
+.list-card {
+    border-bottom: 1rpx solid #eee;
+    color: #333;
+    font-size: 28rpx;
+    padding: 30rpx
+}
+
+.row {
+    margin-bottom: 10rpx
+}
+
+.popup-title {
+    border-bottom: 1rpx solid #eee;
+    font-size: 32rpx;
+    font-weight: 700;
+    padding: 30rpx;
+    text-align: center
+}
+
+.flow-content {
+    padding: 30rpx 0
+}

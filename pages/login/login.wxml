@@ -1,0 +1,16 @@
+<view class="container">
+    <view class="logo-area">
+        <van-icon color="#1989fa" name="points" size="80px"></van-icon>
+        <view class="title">企业任务助手</view>
+    </view>
+    <view class="form-area">
+        <van-cell-group>
+            <van-field clearable required bind:change="onUserChange" cursorSpacing="100" label="用户名" placeholder="请输入用户名" value="{{username}}"></van-field>
+            <van-field required bind:change="onPwdChange" bind:confirm="handleLogin" border="{{false}}" cursorSpacing="100" label="密码" placeholder="请输入密码" type="password" value="{{password}}"></van-field>
+        </van-cell-group>
+        <view class="btn-box">
+            <van-button block round bind:click="handleLogin" type="info">登录</van-button>
+        </view>
+    </view>
+    <van-toast id="van-toast"></van-toast>
+</view>

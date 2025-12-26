@@ -1,0 +1,28 @@
+.container {
+    background: #fff;
+    box-sizing: border-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    height: 100vh;
+    -webkit-justify-content: center;
+    justify-content: center;
+    padding: 40rpx 40rpx 34vh
+}
+
+.logo-area {
+    margin-bottom: 80rpx;
+    text-align: center
+}
+
+.title {
+    color: #333;
+    font-size: 40rpx;
+    font-weight: 700;
+    margin-top: 20rpx
+}
+
+.btn-box {
+    margin-top: 60rpx
+}
