@@ -7,13 +7,13 @@ Page({
     keyword: '',
     startDate: '',
     endDate: '',
-    statusLabel: '', // 过滤状态：待处理、已处理、全部
+    statusLabel: '', // 过滤状态：待办、已办、全部
     minDate: new Date(2020, 0, 1).getTime(),
     maxDate: new Date().getTime(),
     formatedDate: '',
     showCalendar: false,
     showPicker: false,
-    statusColumns: ['全部', '待处理', '已处理'],
+    statusColumns: ['全部', '待办', '已办'],
     refreshWhenShow: false, // 详情页返回时是否触发刷新
     taskList: [],
     page: 1,
@@ -65,8 +65,8 @@ Page({
 
     this.setData({ loading: true })
 
-    // 状态标签转为后端 API 定义的 state (0: 待处理, 1: 已处理)
-    const statusMap = { 待处理: 0, 已处理: 1 }
+    // 状态标签转为后端 API 定义的 state (0: 待办, 1: 已办)
+    const statusMap = { 待办: 0, 已办: 1 }
 
     request({
       url: '/task/workflowTask',
@@ -175,7 +175,7 @@ Page({
   },
 
   /**
-   * 状态筛选相关逻辑 (待处理/已处理)
+   * 状态筛选相关逻辑 (待办/已办)
    */
   showStatusPicker: function () {
     this.setData({ showPicker: true })

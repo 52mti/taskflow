@@ -534,7 +534,7 @@ const CONFIG_MAP = {
         isVisible: function (data) {
           const userInfo = wx.getStorageSync('userInfo') || {}
           const currentUserId = userInfo.id || ''
-          // 逻辑：状态为待处理(0) 且 是首个环节 且 当前人为执行人
+          // 逻辑：状态为待办(0) 且 是首个环节 且 当前人为执行人
           return (
             data.state === 0 &&
             data.firstFormKey === data.formKey &&
