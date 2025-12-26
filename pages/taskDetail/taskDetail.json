@@ -14,7 +14,7 @@
     "van-field": "@vant/weapp/field/index",
     "van-icon": "@vant/weapp/icon/index",
     "van-toast": "@vant/weapp/toast/index",
-    "custom-table": "components/custom-table/index"
+    "custom-table": "/components/custom-table/index"
   },
   "navigationBarTitleText": "任务详情"
 }
