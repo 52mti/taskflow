@@ -40,17 +40,49 @@ const CONFIG_MAP = {
       { label: '基础信息' },
       { key: 'code', title: '供应商编号', valueFormatter: formatDefault },
       { key: 'name', title: '供应商名称', valueFormatter: formatDefault },
-      { key: 'shortName', title: '供应商简称', valueFormatter: formatDefault },
-      { key: 'typeName', title: '供应商类型', valueFormatter: formatDefault },
+      {
+        key: 'shortName',
+        title: '供应商简称',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'typeName',
+        title: '供应商类型',
+        valueFormatter: formatDefault,
+      },
       { key: 'linkman', title: '联系人', valueFormatter: formatDefault },
-      { key: 'linkPhone', title: '联系方式', valueFormatter: formatDefault },
+      {
+        key: 'linkPhone',
+        title: '联系方式',
+        valueFormatter: formatDefault,
+      },
       { key: 'remarks', title: '备注', valueFormatter: formatDefault },
       { label: '收款信息', valueFormatter: formatDefault },
-      { key: 'enterpriseName', title: '企业全称', valueFormatter: formatDefault },
-      { key: 'bankAccount', title: '对公银行账号', valueFormatter: formatDefault },
-      { key: 'bankName', title: '对公银行名称', valueFormatter: formatDefault },
-      { key: 'contactPhone', title: '联系电话', valueFormatter: formatDefault },
-      { key: 'contactAddress', title: '联系地址', valueFormatter: formatDefault },
+      {
+        key: 'enterpriseName',
+        title: '企业全称',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'bankAccount',
+        title: '对公银行账号',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'bankName',
+        title: '对公银行名称',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'contactPhone',
+        title: '联系电话',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'contactAddress',
+        title: '联系地址',
+        valueFormatter: formatDefault,
+      },
       { key: 'files', title: '文件资料', valueFormatter: formatFileList },
     ],
     btnList: [
@@ -61,11 +93,13 @@ const CONFIG_MAP = {
         type: 'default',
         plain: true,
         isVisible: function (data) {
-          const userId = wx.getStorageSync('userInfo')?.id || ''
+          const userInfo = wx.getStorageSync('userInfo') || {}
+          const currentUserId = userInfo.id || ''
+          // 逻辑：状态为0 且 是第一个表单 且 当前执行人是自己
           return (
-            0 === data.state &&
+            data.state === 0 &&
             data.firstFormKey === data.formKey &&
-            [data.executor].includes(userId)
+            [data.executor].includes(currentUserId)
           )
         },
       },
@@ -82,6 +116,7 @@ const CONFIG_MAP = {
         action: 'handleReject',
         actionPayload: { url: '/user/supplier/audit' },
         type: 'danger',
+        plain: false,
         isVisible: () => true,
       },
       {
@@ -89,6 +124,7 @@ const CONFIG_MAP = {
         action: 'handleApprove',
         actionPayload: { url: '/user/supplier/audit' },
         type: 'primary',
+        plain: false,
         isVisible: () => true,
       },
     ],
@@ -102,7 +138,11 @@ const CONFIG_MAP = {
       { label: '基础信息' },
       { key: 'code', title: '施工队编号', valueFormatter: formatDefault },
       { key: 'name', title: '施工队名称', valueFormatter: formatDefault },
-      { key: 'chargePersonName', title: '负责人', valueFormatter: formatDefault },
+      {
+        key: 'chargePersonName',
+        title: '负责人',
+        valueFormatter: formatDefault,
+      },
       {
         key: 'chargePersonPhone',
         title: '负责人联系方式',
@@ -110,11 +150,31 @@ const CONFIG_MAP = {
       },
       { key: 'remarks', title: '备注', valueFormatter: formatDefault },
       { label: '收款信息', valueFormatter: formatDefault },
-      { key: 'enterpriseName', title: '企业全称', valueFormatter: formatDefault },
-      { key: 'bankAccount', title: '对公银行账户', valueFormatter: formatDefault },
-      { key: 'bankName', title: '对公银行名称', valueFormatter: formatDefault },
-      { key: 'contactPhone', title: '联系电话', valueFormatter: formatDefault },
-      { key: 'contactAddress', title: '联系地址', valueFormatter: formatDefault },
+      {
+        key: 'enterpriseName',
+        title: '企业全称',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'bankAccount',
+        title: '对公银行账户',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'bankName',
+        title: '对公银行名称',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'contactPhone',
+        title: '联系电话',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'contactAddress',
+        title: '联系地址',
+        valueFormatter: formatDefault,
+      },
     ],
     tabList: [
       {
@@ -167,21 +227,33 @@ const CONFIG_MAP = {
       {
         text: '重新提交',
         action: 'handleReapply',
+        actionPayload: { path: '' },
+        type: 'default',
+        plain: true,
         isVisible: function (data) {
-          const userId = wx.getStorageSync('userInfo')?.id || ''
+          const userInfo = wx.getStorageSync('userInfo') || {}
+          const currentUserId = userInfo.id || ''
           return (
-            0 === data.state &&
+            data.state === 0 &&
             data.firstFormKey === data.formKey &&
-            [data.executor].includes(userId)
+            [data.executor].includes(currentUserId)
           )
         },
       },
-      { text: '流程', action: 'showWorkflow', isVisible: () => true },
+      {
+        text: '流程',
+        action: 'showWorkflow',
+        actionPayload: {},
+        type: 'default',
+        plain: true,
+        isVisible: () => true,
+      },
       {
         text: '驳回',
         action: 'handleReject',
         actionPayload: { url: '/user/constructionTeam/audit' },
         type: 'danger',
+        plain: false,
         isVisible: () => true,
       },
       {
@@ -189,6 +261,7 @@ const CONFIG_MAP = {
         action: 'handleApprove',
         actionPayload: { url: '/user/constructionTeam/audit' },
         type: 'primary',
+        plain: false,
         isVisible: () => true,
       },
     ],
@@ -198,11 +271,21 @@ const CONFIG_MAP = {
   KEY_DISTRIBUTION_PROJECT: {
     url: '/project/frameworkProject/get',
     title: '项目',
+
+    // 1. 基础详情字段
     formField: [
       { label: '详情' },
-      { key: 'biddingName', title: '招投标名称', valueFormatter: formatDefault },
+      {
+        key: 'biddingName',
+        title: '招投标名称',
+        valueFormatter: formatDefault,
+      },
       { key: 'customerName', title: '客户名称', valueFormatter: formatDefault },
-      { key: 'projectTypeName', title: '项目类型', valueFormatter: formatDefault },
+      {
+        key: 'projectTypeName',
+        title: '项目类型',
+        valueFormatter: formatDefault,
+      },
       { key: 'name', title: '项目名称', valueFormatter: formatDefault },
       {
         key: 'assignOrganizationName',
@@ -210,49 +293,135 @@ const CONFIG_MAP = {
         valueFormatter: formatDefault,
       },
     ],
+
+    // 2. 选项卡列表（关联数据）
     tabList: [
       {
         key: 'contractList',
         title: '项目合同',
         headerList: [
-          /* 合同列表配置 */
+          { key: 'code', value: '合同编号', valueType: 'string' },
+          { key: 'name', value: '合同名称', valueType: 'string' },
+          { key: 'contractTypeName', value: '合同类型', valueType: 'string' },
+          { key: 'signDate', value: '合同签订日期', valueType: 'string' },
+          { key: 'amountWithTax', value: '合同含税金额', valueType: 'amount' },
+          {
+            key: 'amountWithoutTax',
+            value: '合同不含税金额',
+            valueType: 'amount',
+          },
+          {
+            key: 'professionalCategoryName',
+            value: '专业类别',
+            valueType: 'string',
+          },
+          {
+            key: 'projectLocationName',
+            value: '工程所在地',
+            valueType: 'string',
+          },
+          { key: 'taxRate', value: '税率', valueType: 'rate' },
         ],
       },
       {
         key: 'depositList',
         title: '保证金（履约保证金）',
         headerList: [
-          /* 保证金列表配置 */
+          { key: 'depositTypeName', value: '保证金类型', valueType: 'string' },
+          { key: 'applyUserName', value: '申请人', valueType: 'string' },
+          { key: 'applyTime', value: '申请时间', valueType: 'string' },
+          { key: 'amount', value: '保证金金额', valueType: 'amount' },
+          { key: 'refundDate', value: '返还日期', valueType: 'string' },
+          { key: 'isPayName', value: '付款状态', valueType: 'string' },
+          { key: 'isRecycleName', value: '回收状态', valueType: 'string' },
+          { key: 'remark', value: '备注', valueType: 'string' },
+          {
+            key: 'entityAuditStatusName',
+            value: '审核状态',
+            valueType: 'string',
+          },
+          { key: 'auditTime', value: '审核时间', valueType: 'string' },
         ],
       },
       {
         key: 'paymentOrderList',
         title: '用款申请',
         headerList: [
-          /* 用款列表配置 */
+          { key: 'businessTypeName', value: '用款类型', valueType: 'string' },
+          { key: 'typeName', value: '用款用途', valueType: 'string' },
+          { key: 'amount', value: '用款金额', valueType: 'amount' },
+          { key: 'purpose', value: '用款说明', valueType: 'string' },
+          { key: 'applyUserName', value: '申请人', valueType: 'string' },
+          { key: 'applyTime', value: '申请时间', valueType: 'string' },
+          { key: 'entityAuditStatusName', value: '状态', valueType: 'string' },
+          { key: 'auditRemarks', value: '驳回原因', valueType: 'string' },
+          { key: 'auditTime', value: '审核时间', valueType: 'string' },
+          { key: 'remark', value: '备注', valueType: 'string' },
         ],
       },
       {
         key: 'projectList',
         title: '订单',
         headerList: [
-          /* 订单列表配置 */
+          { key: 'code', value: '订单编号', valueType: 'string' },
+          { key: 'name', value: '订单名称', valueType: 'string' },
+          { key: 'amountWithTax', value: '合同含税金额', valueType: 'amount' },
+          {
+            key: 'amountWithoutTax',
+            value: '合同不含税金额',
+            valueType: 'amount',
+          },
+          {
+            key: 'orderActualAmount',
+            value: '目标回款金额',
+            valueType: 'amount',
+          },
+          { key: 'invoiceAmount', value: '已回款金额', valueType: 'amount' },
+          { key: 'unInvoiceAmount', value: '未回款金额', valueType: 'amount' },
+          { key: 'orderCostAmount', value: '总成本费', valueType: 'amount' },
+          { key: 'grossProfit', value: '利润', valueType: 'amount' },
+          { key: 'grossProfitMargin', value: '毛利率', valueType: 'rate' },
+          { key: 'projectStatusName', value: '进度', valueType: 'string' },
+          { key: 'organizationName', value: '负责项目组', valueType: 'string' },
+          { key: 'created', value: '创建时间', valueType: 'string' },
+          { key: 'createUserName', value: '创建人', valueType: 'string' },
         ],
       },
     ],
+
+    // 3. 操作按钮逻辑
     btnList: [
       {
         text: '重新提交',
         action: 'handleReapply',
+        actionPayload: { path: '' },
+        type: 'default',
+        plain: true,
         isVisible: function (data) {
-          /* 逻辑同上 */
+          const userInfo = wx.getStorageSync('userInfo') || {}
+          const currentUserId = userInfo.id || ''
+          // 仅当状态为0(草稿)、是初始表单、且当前操作人为自己时可见
+          return (
+            data.state === 0 &&
+            data.firstFormKey === data.formKey &&
+            [data.executor].includes(currentUserId)
+          )
         },
+      },
+      {
+        text: '流程',
+        action: 'showWorkflow',
+        actionPayload: {},
+        type: 'default',
+        plain: true,
+        isVisible: () => true,
       },
       {
         text: '驳回',
         action: 'handleReject',
         actionPayload: { url: '/project/frameworkProject/audit' },
         type: 'danger',
+        plain: false,
         isVisible: () => true,
       },
       {
@@ -260,6 +429,7 @@ const CONFIG_MAP = {
         action: 'handleApprove',
         actionPayload: { url: '/project/frameworkProject/audit' },
         type: 'primary',
+        plain: false,
         isVisible: () => true,
       },
     ],
@@ -272,7 +442,10 @@ const CONFIG_MAP = {
   KEY_PROJECT_CO_OPERATION: {
     url: '/project/constructionTeamCooperate/get',
     title: '施工队合作[审批]',
+
+    // 1. 详情表单字段映射
     formField: [
+      { label: '详情' },
       {
         key: 'constructionTeamCode',
         title: '施工队编号',
@@ -283,19 +456,106 @@ const CONFIG_MAP = {
         title: '施工队名称',
         valueFormatter: formatDefault,
       },
-      { key: 'projectName', title: '申请合作订单', valueFormatter: formatDefault },
+      {
+        key: 'chargePersonName',
+        title: '负责人',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'chargePersonPhone',
+        title: '负责人联系方式',
+        valueFormatter: formatDefault,
+      },
+      { key: 'workerNumber', title: '工人数量', valueFormatter: formatDefault },
+      {
+        key: 'collaborativeProjectNumber',
+        title: '合作项目数量',
+        valueFormatter: formatDefault,
+      },
+      { key: 'createUserName', title: '申请人', valueFormatter: formatDefault },
+      { key: 'created', title: '申请时间', valueFormatter: formatDefault },
+      {
+        key: 'projectName',
+        title: '申请合作订单',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'unitDetailCount',
+        title: '申请合作单位明细',
+        valueFormatter: formatDefault,
+      },
       {
         key: 'constructionContractFile',
         title: '施工合同文件',
         valueFormatter: formatDefault,
       },
+      { key: 'remarks', title: '备注', valueFormatter: formatDefault },
+      {
+        key: 'entityAuditStatusName',
+        title: '审核状态',
+        valueFormatter: formatDefault,
+      },
+      { key: 'auditRemarks', title: '驳回原因', valueFormatter: formatDefault },
+      { key: 'auditTime', title: '审核时间', valueFormatter: formatDefault },
     ],
+
+    // 2. 数据列表/选项卡（单位明细）
+    tabList: [
+      {
+        key: 'unitDetailList',
+        title: '单位明细',
+        headerList: [
+          { key: 'name', value: '单项名称', width: 120, valueType: 'string' },
+          { key: 'district', value: '行政区', width: 120, valueType: 'string' },
+          {
+            key: 'constructionFee',
+            value: '施工费',
+            width: 120,
+            valueType: 'amount',
+          },
+          {
+            key: 'constructionTeamName',
+            value: '合作施工队',
+            width: 180,
+            valueType: 'string',
+          },
+        ],
+      },
+    ],
+
+    // 3. 底部操作按钮逻辑
     btnList: [
+      {
+        text: '重新提交',
+        action: 'handleReapply',
+        actionPayload: { path: '' },
+        type: 'default',
+        plain: true,
+        isVisible: function (data) {
+          const userInfo = wx.getStorageSync('userInfo') || {}
+          const currentUserId = userInfo.id || ''
+          // 逻辑：状态为待处理(0) 且 是首个环节 且 当前人为执行人
+          return (
+            data.state === 0 &&
+            data.firstFormKey === data.formKey &&
+            [data.executor].includes(currentUserId)
+          )
+        },
+      },
+      {
+        text: '流程',
+        action: 'showWorkflow',
+        actionPayload: {},
+        type: 'default',
+        plain: true,
+        isVisible: () => true,
+      },
       {
         text: '驳回',
         action: 'handleReject',
         actionPayload: { url: '/project/constructionTeamCooperate/audit' },
         type: 'danger',
+        plain: false,
         isVisible: () => true,
       },
       {
@@ -303,6 +563,7 @@ const CONFIG_MAP = {
         action: 'handleApprove',
         actionPayload: { url: '/project/constructionTeamCooperate/audit' },
         type: 'primary',
+        plain: false,
         isVisible: () => true,
       },
     ],
@@ -312,9 +573,15 @@ const CONFIG_MAP = {
   KEY_AUDIT_FEE: {
     url: '/project/auditFee/get',
     title: '审计费[审批]',
+
+    // 1. 字段定义
     formField: [
+      { label: '详情' },
       { key: 'projectName', title: '订单名称', valueFormatter: formatDefault },
+      { key: 'typeName', title: '用款类型', valueFormatter: formatDefault },
       { key: 'amount', title: '用款金额', valueFormatter: formatCurrency },
+      { key: 'purpose', title: '用款用途', valueFormatter: formatDefault },
+      { key: 'remark', title: '备注', valueFormatter: formatDefault },
       {
         key: 'paymentVoucher',
         title: '打款凭证',
@@ -322,35 +589,81 @@ const CONFIG_MAP = {
       },
       { key: 'invoiceFile', title: '发票', valueFormatter: formatFileList },
     ],
+
+    // 2. 动态操作按钮列表
     btnList: [
+      {
+        text: '重新提交',
+        action: 'handleReapply',
+        actionPayload: { path: '' },
+        type: 'default',
+        plain: true,
+        isVisible: function (data) {
+          const userInfo = wx.getStorageSync('userInfo') || {}
+          const currentUserId = userInfo.id || ''
+          return (
+            data.state === 0 &&
+            data.firstFormKey === data.formKey &&
+            [data.executor].includes(currentUserId)
+          )
+        },
+      },
+      {
+        text: '流程',
+        action: 'showWorkflow',
+        actionPayload: {},
+        type: 'default',
+        plain: true,
+        isVisible: () => true,
+      },
       {
         text: '驳回',
         action: 'handleReject',
-        isVisible: function (e) {
-          // 财务、总经理、董事长可见
-          return [
-            'form_audit_fee_cwb_audit',
-            'form_audit_fee_zjl_audit',
-            'form_audit_fee_dsz_audit',
-          ].includes(e.formKey)
-        },
+        actionPayload: { url: '/project/auditFee/audit' },
+        type: 'danger',
+        plain: false,
+        isVisible: (data) =>
+          [
+            'form_audit_fee_cwb_audit', // 财务部审核环节
+            'form_audit_fee_zjl_audit', // 总经理审核环节
+            'form_audit_fee_dsz_audit', // 董事长审核环节
+          ].includes(data.formKey),
       },
       {
         text: '通过',
         action: 'handleApprove',
-        isVisible: function (e) {
-          return [
+        actionPayload: { url: '/project/auditFee/audit' },
+        type: 'primary',
+        plain: false,
+        isVisible: (data) =>
+          [
             'form_audit_fee_cwb_audit',
             'form_audit_fee_zjl_audit',
             'form_audit_fee_dsz_audit',
-          ].includes(e.formKey)
-        },
+          ].includes(data.formKey),
       },
       {
         text: '上传打款凭证',
         action: 'uploadFiles',
-        isVisible: (e) =>
-          e.formKey === 'form_audit_fee_cwb_upload_payment_voucher',
+        actionPayload: {
+          url: '/project/auditFee/process',
+          field: 'paymentVoucher',
+        },
+        type: 'primary',
+        plain: false,
+        isVisible: (data) =>
+          data.formKey === 'form_audit_fee_cwb_upload_payment_voucher',
+      },
+      {
+        text: '上传发票',
+        action: 'uploadFiles',
+        actionPayload: {},
+        type: 'primary',
+        plain: false,
+        url: '/project/auditFee/process',
+        field: 'invoiceFile',
+        isVisible: (data) =>
+          data.formKey === 'form_audit_fee_zlb_upload_payment_voucher',
       },
     ],
   },
@@ -359,51 +672,184 @@ const CONFIG_MAP = {
   KEY_PURCHASE_ORDER: {
     url: '/project/purchaseOrder/get',
     title: '采购单[审批]',
+
+    // 1. 基础详情字段
     formField: [
+      { label: '详情' },
+      { key: 'code', title: '采购单号', valueFormatter: formatDefault },
+      { key: 'name', title: '采购单名称', valueFormatter: formatDefault },
       { key: 'totalCost', title: '采购单金额', valueFormatter: formatCurrency },
+      {
+        key: 'projectName',
+        title: '所属订单',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'applyUserName',
+        title: '申请人',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'belongToDepartmentName',
+        title: '申请项目组',
+        valueFormatter: formatDefault,
+      },
       { key: 'invoice', title: '开票信息', valueFormatter: formatFileList },
       {
         key: 'paymentVoucher',
         title: '打款凭证',
         valueFormatter: formatFileList,
       },
+      {
+        key: 'entityAuditStatusName',
+        title: '状态',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'auditRemarks',
+        title: '驳回原因',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'auditTime',
+        title: '审核时间',
+        valueFormatter: formatDefault,
+      },
     ],
+
+    // 2. 采购物料明细清单
+    tabList: [
+      {
+        key: 'purchaseOrderItemList',
+        title: '物料明细',
+        headerList: [
+          { key: 'materialName', value: '物料名称', valueType: 'string' },
+          { key: 'specification', value: '物料规格', valueType: 'string' },
+          { key: 'unit', value: '计量单位', valueType: 'string' },
+          { key: 'price', value: '物料单价', valueType: 'amount' },
+          { key: 'quantity', value: '物料数量', valueType: 'string' },
+          { key: 'amount', value: '费用', valueType: 'amount' },
+          { key: 'supplierName', value: '供应商', valueType: 'string' },
+          { key: 'isSpecialName', value: '是否专项材料', valueType: 'string' },
+        ],
+      },
+    ],
+
+    // 3. 动态业务操作按钮
     btnList: [
+      {
+        text: '重新提交',
+        action: 'handleReapply',
+        actionPayload: { path: '' },
+        type: 'default',
+        plain: true,
+        isVisible: function (data) {
+          const userInfo = wx.getStorageSync('userInfo') || {}
+          const currentUserId = userInfo.id || ''
+          return (
+            data.state === 0 &&
+            data.firstFormKey === data.formKey &&
+            [data.executor].includes(currentUserId)
+          )
+        },
+      },
+      {
+        text: '流程',
+        action: 'showWorkflow',
+        actionPayload: {},
+        type: 'default',
+        plain: true,
+        isVisible: () => true,
+      },
       {
         text: '驳回',
         action: 'handleReject',
-        isVisible: (e) =>
+        actionPayload: { url: '/project/purchaseOrder/audit' },
+        type: 'danger',
+        plain: false,
+        isVisible: (data) =>
           [
-            'form_purchase_order_dsz_audit',
-            'form_purchase_order_tkb_audit',
-            'form_purchase_order_ld_audit',
-          ].includes(e.formKey),
+            'form_purchase_order_dsz_audit', // 董事长
+            'form_purchase_order_tkb_audit', // 调控部
+            'form_purchase_order_ld_audit', // 领导层
+          ].includes(data.formKey),
       },
       {
         text: '通过',
         action: 'handleApprove',
-        isVisible: (e) =>
+        actionPayload: { url: '/project/purchaseOrder/audit' },
+        type: 'primary',
+        plain: false,
+        isVisible: (data) =>
           [
             'form_purchase_order_dsz_audit',
             'form_purchase_order_tkb_audit',
             'form_purchase_order_ld_audit',
-          ].includes(e.formKey),
+          ].includes(data.formKey),
+      },
+      {
+        text: '上传开票信息',
+        action: 'uploadFiles',
+        actionPayload: {
+          url: '/project/purchaseOrder/process',
+          field: 'invoice',
+        },
+        type: 'primary',
+        plain: false,
+        isVisible: (data) => data.formKey === 'form_purchase_order_tkb_upload',
       },
       {
         text: '上传打款凭证',
         action: 'uploadFiles',
-        isVisible: (e) =>
-          e.formKey === 'form_purchase_order_cwb_upload_voucher',
+        actionPayload: {
+          url: '/project/purchaseOrder/process',
+          field: 'paymentVoucher',
+        },
+        type: 'primary',
+        plain: false,
+        isVisible: (data) =>
+          data.formKey === 'form_purchase_order_cwb_upload_voucher',
+      },
+      {
+        text: '确认收货',
+        action: 'confirmReceived',
+        actionPayload: {},
+        type: 'default',
+        plain: true,
+        isVisible: (data) => data.formKey === 'form_purchase_order_ckb_receipt', // 仓库部收货
       },
     ],
   },
 
-  // 7. 用款审批 (全场景覆盖)
+  // 7. 用款审批
   KEY_PAYMENT_ORDER: {
     url: '/project/paymentOrder/get',
     title: '用款[审批]',
+
+    // 1. 详情表单字段
     formField: [
+      { label: '详情' },
+      {
+        key: 'businessTypeName',
+        title: '用款类型',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'biddingName',
+        title: '招投标名称',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'frameworkProjectName',
+        title: '项目名称',
+        valueFormatter: formatDefault,
+      },
+      { key: 'projectName', title: '订单名称', valueFormatter: formatDefault },
+      { key: 'customerName', title: '客户名称', valueFormatter: formatDefault },
+      { key: 'typeName', title: '用款用途', valueFormatter: formatDefault },
       { key: 'amount', title: '用款金额', valueFormatter: formatCurrency },
+      { key: 'purpose', title: '用款说明', valueFormatter: formatDefault },
+      { key: 'remark', title: '备注', valueFormatter: formatDefault },
       {
         key: 'paymentVoucher',
         title: '打款凭证',
@@ -416,11 +862,56 @@ const CONFIG_MAP = {
       },
       { key: 'invoiceFile', title: '发票', valueFormatter: formatFileList },
     ],
+
+    // 2. 动态按钮与权限控制
     btnList: [
+      {
+        text: '重新提交',
+        action: 'handleReapply',
+        actionPayload: { path: '' },
+        type: 'default',
+        plain: true,
+        isVisible: function (data) {
+          const userInfo = wx.getStorageSync('userInfo') || {}
+          const currentUserId = userInfo.id || ''
+          return (
+            data.state === 0 &&
+            data.firstFormKey === data.formKey &&
+            [data.executor].includes(currentUserId)
+          )
+        },
+      },
+      {
+        text: '流程',
+        action: 'showWorkflow',
+        actionPayload: {},
+        type: 'default',
+        plain: true,
+        isVisible: () => true,
+      },
+      {
+        text: '驳回',
+        action: 'handleReject',
+        actionPayload: { url: '/project/paymentOrder/audit' },
+        type: 'danger',
+        plain: false,
+        isVisible: (data) =>
+          [
+            'form_payment_order_zlb_audit', // 总办审核
+            'form_payment_order_zdb_audit', // 总部审核
+            'form_payment_order_cwb_audit', // 财务审核
+            'form_payment_order_dsz_audit', // 董事长审核
+            'form_payment_order_start', // 流程启动/初审
+            'form_payment_order_zjl_audit', // 总经理审核
+          ].includes(data.formKey),
+      },
       {
         text: '通过',
         action: 'handleApprove',
-        isVisible: (e) =>
+        actionPayload: { url: '/project/paymentOrder/audit' },
+        type: 'primary',
+        plain: false,
+        isVisible: (data) =>
           [
             'form_payment_order_zlb_audit',
             'form_payment_order_zdb_audit',
@@ -428,14 +919,46 @@ const CONFIG_MAP = {
             'form_payment_order_dsz_audit',
             'form_payment_order_start',
             'form_payment_order_zjl_audit',
-          ].includes(e.formKey),
+          ].includes(data.formKey),
       },
       {
         text: '上传打款凭证',
         action: 'uploadFiles',
-        actionPayload: { field: 'paymentVoucher' },
-        isVisible: (e) =>
-          e.formKey === 'form_payment_order_cwb_upload_payment_proof',
+        actionPayload: {
+          url: '/project/paymentOrder/process',
+          field: 'paymentVoucher',
+        },
+        type: 'primary',
+        plain: false,
+        isVisible: (data) =>
+          data.formKey === 'form_payment_order_cwb_upload_payment_proof',
+      },
+      {
+        text: '上传领用凭证',
+        action: 'uploadFiles',
+        actionPayload: {
+          url: '/project/paymentOrder/process',
+          field: 'receiveVoucher',
+        },
+        type: 'primary',
+        plain: false,
+        isVisible: (data) =>
+          data.formKey === 'form_payment_order_issue_voucher',
+      },
+      {
+        text: '上传发票',
+        action: 'uploadFiles',
+        actionPayload: {
+          url: '/project/paymentOrder/process',
+          field: 'invoiceFile',
+        },
+        type: 'default',
+        plain: true,
+        isVisible: (data) =>
+          [
+            'form_payment_order_cwb_upload_invoice',
+            'form_payment_order_tkb_upload_invoice',
+          ].includes(data.formKey),
       },
     ],
   },
@@ -791,47 +1314,134 @@ const CONFIG_MAP = {
     ],
   },
 
-  // 11. 竣工资料审批 (文件末尾配置)
+  // 11. 竣工资料审批
   KEY_COMPLETION: {
     url: '/project/completionData/get',
     title: '竣工资料[审批]',
+
+    // 1. 表单字段定义
     formField: [
+      { label: '详情' },
       {
-        key: 'initFile',
-        title: '初始竣工资料',
-        valueFormatter: formatFileList,
+        key: 'biddingName',
+        title: '招投标名称',
+        valueFormatter: formatDefault,
       },
+      {
+        key: 'frameworkProjectName',
+        title: '项目名称',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'projectName',
+        title: '订单名称',
+        valueFormatter: formatDefault,
+      },
+      { key: 'name', title: '资料名称', valueFormatter: formatDefault },
+      { key: 'initFile', title: '初始竣工资料', valueFormatter: formatFileList },
       {
         key: 'improveFile',
         title: '完善竣工资料',
         valueFormatter: formatFileList,
       },
       { key: 'auditFile', title: '审定单', valueFormatter: formatDefault },
+      {
+        key: 'entityAuditStatusName',
+        title: '状态',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'auditRemarks',
+        title: '驳回原因',
+        valueFormatter: formatDefault,
+      },
+      {
+        key: 'auditTime',
+        title: '审核时间',
+        valueFormatter: formatDefault,
+      },
     ],
+
+    // 2. 底部操作按钮逻辑
     btnList: [
+      {
+        text: '重新提交',
+        action: 'handleReapply',
+        actionPayload: { path: '' },
+        type: 'default',
+        plain: true,
+        isVisible: function (data) {
+          const userInfo = wx.getStorageSync('userInfo') || {}
+          const currentUserId = userInfo.id || ''
+          return (
+            data.state === 0 &&
+            data.firstFormKey === data.formKey &&
+            [data.executor].includes(currentUserId)
+          )
+        },
+      },
+      {
+        text: '流程',
+        action: 'showWorkflow',
+        actionPayload: {},
+        type: 'default',
+        plain: true,
+        isVisible: () => true,
+      },
       {
         text: '驳回',
         action: 'handleReject',
-        isVisible: (e) =>
-          ['form_data_xmb_audit', 'form_data_zlb_audit'].includes(e.formKey),
+        actionPayload: { url: '/project/completionData/audit' },
+        type: 'danger',
+        plain: false,
+        isVisible: (data) =>
+          [
+            'form_data_xmb_audit', // 项目部审核
+            'form_data_zlb_audit', // 总办/质量部审核
+          ].includes(data.formKey),
       },
       {
         text: '通过',
         action: 'handleApprove',
-        isVisible: (e) =>
-          ['form_data_xmb_audit', 'form_data_zlb_audit'].includes(e.formKey),
+        actionPayload: { url: '/project/completionData/audit' },
+        type: 'primary',
+        plain: false,
+        isVisible: (data) =>
+          ['form_data_xmb_audit', 'form_data_zlb_audit'].includes(data.formKey),
       },
       {
         text: '上传审定单',
         action: 'uploadFiles',
-        actionPayload: { field: 'auditFile' },
-        isVisible: (e) => e.formKey === 'form_data_xmb_upload_audit_file',
+        actionPayload: {
+          url: '/project/completionData/process',
+          field: 'auditFile',
+        },
+        type: 'primary',
+        plain: false,
+        isVisible: (data) => data.formKey === 'form_data_xmb_upload_audit_file',
       },
       {
-        text: '上传完善资料',
+        text: '重新上传初始竣工资料',
         action: 'uploadFiles',
-        actionPayload: { field: 'improveFile' },
-        isVisible: (e) => e.formKey === 'form_data_xmb_upload_approval_order',
+        actionPayload: {
+          url: '/project/completionData/process',
+          field: 'initFile',
+        },
+        type: 'primary',
+        plain: false,
+        isVisible: (data) => data.formKey === 'form_data_start',
+      },
+      {
+        text: '上传完善竣工资料',
+        action: 'uploadFiles',
+        actionPayload: {
+          url: '/project/completionData/process',
+          field: 'improveFile',
+        },
+        type: 'primary',
+        plain: false,
+        isVisible: (data) =>
+          data.formKey === 'form_data_xmb_upload_approval_order',
       },
     ],
   },
