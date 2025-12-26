@@ -1,287 +1,332 @@
-var t = require("../../@babel/runtime/helpers/defineProperty");
-require("../../@babel/runtime/helpers/Arrayincludes");
-var e = s(require("@vant/weapp/toast/toast")),
-  a = s(require("../../utils/request")),
-  i = s(require("./config")),
-  n = s(require("@vant/weapp/dialog/dialog"));
+import Toast from '@vant/weapp/toast/toast';
+import Dialog from '@vant/weapp/dialog/dialog';
+import request from '../../utils/request';
+import CONFIG from './config';
 
-function s(t) {
-  return t && t.__esModule ? t : {
-    default: t
-  }
-}
 Page({
   data: {
-    status: "",
-    tabTableList: [],
-    activeTab: 0,
-    detailKeyList: [],
-    btnList: [],
-    rejectReason: "",
-    handleBeforeClose: null,
-    rejectDialogFocus: !1,
-    showRejectDialog: !1,
-    showApprovalDialog: !1,
-    entityId: "",
-    taskKey: "",
-    formKey: "",
-    processInstanceId: "",
-    showFlow: !1,
-    steps: [],
-    activeStep: 1
+    status: "",           // 任务状态
+    tabTableList: [],     // 选项卡表格数据
+    activeTab: 0,         // 当前激活的标签索引
+    detailKeyList: [],    // 详情渲染列表（分组）
+    btnList: [],          // 当前节点可操作按钮列表
+    rejectReason: "",     // 驳回原因
+    handleBeforeClose: null, // 弹窗关闭前的拦截器
+    rejectDialogFocus: false,
+    showRejectDialog: false,
+    showApprovalDialog: false,
+    entityId: "",         // 业务单据ID
+    taskKey: "",          // 工作流任务节点Key
+    formKey: "",          // 页面表单Key
+    processInstanceId: "", // 流程实例ID
+    showFlow: false,      // 是否显示流程图弹窗
+    steps: [],            // 流程进度条步骤
+    activeStep: 1         // 当前进度位置
   },
-  clickButton: function(t) {
-    var e = t.currentTarget.dataset.index,
-      a = this.data.btnList[e];
-    this[a.action](a.actionPayload)
+
+  /**
+   * 统一按钮点击分发器
+   */
+  clickButton: function(e) {
+    const index = e.currentTarget.dataset.index;
+    const btn = this.data.btnList[index];
+    // 根据 config.js 中定义的 action 名称动态调用本页方法
+    if (this[btn.action]) {
+      this[btn.action](btn.actionPayload);
+    }
   },
-  onLoad: function(t) {
-    this.setData({
-      status: t.status
-    }), "0" === t.status ? (this.setData({
-      entityId: t.id
-    }), this.fetchTaskDetail(t.id, t.processDefinitionId)) : this.fetchWorkflow(t.processInstanceId), this.setData({
-      formKey: t.formKey
-    })
+
+  onLoad: function(options) {
+    const { status, id, processDefinitionId, processInstanceId, formKey } = options;
+    
+    this.setData({ status, formKey });
+
+    // status 为 "0" 通常代表从任务列表进入的“待办详情”
+    if (status === "0") {
+      this.setData({ entityId: id });
+      this.fetchTaskDetail(id, processDefinitionId);
+    } else {
+      // 否则为“已办详情”，直接获取流程轴
+      this.fetchWorkflow(processInstanceId);
+    }
   },
-  fetchTaskDetail: function(t, e) {
-    var n = this;
-    (0, a.default)({
-      url: i.default[e].url,
+
+  /**
+   * 获取业务表单详情
+   */
+  fetchTaskDetail: function(id, configKey) {
+    const self = this;
+    const pageConfig = CONFIG[configKey];
+
+    request({
+      url: pageConfig.url,
       method: "POST",
-      data: {
-        id: t
-      }
-    }).then((function(t) {
-      var a = i.default[e].title || "详情";
-      wx.setNavigationBarTitle({
-        title: a
+      data: { id }
+    }).then(res => {
+      const serverData = res.data;
+      
+      // 设置导航栏标题
+      wx.setNavigationBarTitle({ title: pageConfig.title || "详情" });
+
+      // 1. 根据 config 中的 isVisible 过滤按钮权限
+      const visibleButtons = pageConfig.btnList.filter(btn => btn.isVisible(serverData));
+      
+      // 2. 预设驳回逻辑的拦截器
+      const rejectBtn = visibleButtons.find(btn => btn.text === "驳回");
+      
+      self.setData({
+        btnList: visibleButtons,
+        taskKey: serverData.taskKey,
+        processInstanceId: serverData.processInstanceId,
+        handleBeforeClose: rejectBtn ? self.handleBeforeClose.bind(self, rejectBtn.actionPayload.url) : null
       });
-      var s = i.default[e].btnList.filter((function(e) {
-          return e.isVisible(t.data)
-        })),
-        o = s.find((function(t) {
-          return "驳回" === t.text
-        }));
-      n.setData({
-        handleBeforeClose: o ? n.handleBeforeClose.bind(n, o.actionPayload.url) : null,
-        btnList: s
-      });
-      var l, r;
-      n.setData({
-        taskKey: t.data.taskKey,
-        processInstanceId: t.data.processInstanceId,
-        detailKeyList: (r = [], i.default[e].formField.forEach((function(e) {
-          if (e.label) r.push({
-            title: e.label,
-            list: []
+
+      // 3. 解析详情字段分组 (DetailKeyList)
+      let fieldGroups = [];
+      pageConfig.formField.forEach(field => {
+        if (field.label) {
+          // 如果有 label，创建新分组
+          fieldGroups.push({ title: field.label, list: [] });
+        } else if (fieldGroups.length > 0) {
+          const rawValue = serverData[field.key] || "";
+          const isUrl = String(rawValue).startsWith("http");
+          
+          fieldGroups[fieldGroups.length - 1].list.push({
+            title: field.title,
+            value: field.valueFormatter(rawValue), // 调用 config 中的格式化工具
+            fileValue: isUrl ? rawValue.split(",") : "" // 处理附件
           });
-          else {
-            var a = t.data[e.key] || "",
-              i = String(a).startsWith("http");
-            r[r.length - 1].list.push({
-              title: e.title,
-              value: e.valueFormatter(a),
-              fileValue: i ? a.split(",") : ""
-            })
-          }
-        })), r),
-        tabTableList: (l = [], i.default[e].tabList ? (i.default[e].tabList.forEach((function(e) {
-          var a = t.data[e.key];
-          l.push({
-            title: e.title,
-            tableHeadList: e.headerList,
-            tableBodyList: a
-          })
-        })), l) : [])
-      })
-    }))
-  },
-  fetchWorkflow: function(t) {
-    var e = this;
-    (0, a.default)({
-      url: "/task/workflowTask/getTaskTimeline/".concat(t),
-      method: "POST"
-    }).then((function(t) {
-      wx.setNavigationBarTitle({
-        title: "流程详情"
+        }
       });
-      var a = t.data.map((function(t) {
-        return {
-          text: t.name,
-          desc: "".concat(t.updated, "\n").concat(t.executorName)
-        }
-      }));
-      t.data[t.data.length - 1].finishTime && a.push({
-        text: "已完成"
-      }), e.setData({
-        steps: a,
-        activeStep: a.length - 1
-      })
-    }))
-  },
-  onClickFile: function(t) {
-    var e = t.currentTarget.dataset.file,
-      a = e.slice(e.lastIndexOf(".") + 1).toLowerCase();
-    ["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(a) ? wx.previewImage({
-      current: e,
-      urls: [e]
-    }) : (wx.showLoading({
-      title: "加载中..."
-    }), wx.downloadFile({
-      url: e,
-      success: function(t) {
-        if (200 === t.statusCode) {
-          var e = t.tempFilePath;
-          wx.openDocument({
-            filePath: e,
-            showMenu: !0,
-            fail: function(t) {
-              wx.showToast({
-                title: "打开失败",
-                icon: "none"
-              })
-            }
-          })
-        }
-      },
-      complete: function() {
-        return wx.hideLoading()
+
+      // 4. 解析 Tab 表格数据
+      let tabTables = [];
+      if (pageConfig.tabList) {
+        pageConfig.tabList.forEach(tab => {
+          tabTables.push({
+            title: tab.title,
+            tableHeadList: tab.headerList,
+            tableBodyList: serverData[tab.key]
+          });
+        });
       }
-    }))
-  },
-  navigateBack: function() {
-    var t = getCurrentPages();
-    t.length > 1 && t[t.length - 2].setData({
-      refreshWhenShow: !0
+
+      self.setData({
+        detailKeyList: fieldGroups,
+        tabTableList: tabTables
+      });
     });
-    wx.navigateBack()
   },
-  showWorkflow: function() {
-    this.fetchWorkflow(this.data.processInstanceId), this.setData({
-      showFlow: !0
-    })
-  },
-  closeWorkflow: function() {
-    this.setData({
-      showFlow: !1
-    })
-  },
-  handleApprove: function(t) {
-    var i = this,
-      s = t.url;
-    n.default.confirm({
-      title: "确定通过吗？",
-      beforeClose: function(t) {
-        return new Promise((function(n) {
-          "cancel" !== t ? (0, a.default)({
-            url: s,
-            method: "POST",
-            data: {
-              id: i.data.entityId,
-              auditStatus: 1,
-              formKey: i.data.formKey,
-              taskKey: i.data.taskKey
-            }
-          }).then((function() {
-            n(!0), e.default.success("已通过"), i.navigateBack()
-          })).catch((function() {
-            n(!1), e.default.fail("审批失败")
-          })) : n(!0)
-        }))
+
+  /**
+   * 获取并渲染工作流时间轴
+   */
+  fetchWorkflow: function(instanceId) {
+    request({
+      url: `/task/workflowTask/getTaskTimeline/${instanceId}`,
+      method: "POST"
+    }).then(res => {
+      wx.setNavigationBarTitle({ title: "流程详情" });
+      
+      const timeline = res.data.map(item => ({
+        text: item.name,
+        desc: `${item.updated}\n执行人: ${item.executorName}`
+      }));
+
+      // 如果最后一个节点有完成时间，增加“已完成”标记
+      if (res.data[res.data.length - 1].finishTime) {
+        timeline.push({ text: "已完成" });
       }
-    }).catch((function() {}))
+
+      this.setData({
+        steps: timeline,
+        activeStep: timeline.length - 1
+      });
+    });
   },
-  handleBeforeClose: function(t, i) {
-    var n = this;
-    return "cancel" === i ? Promise.resolve(!0) : this.data.rejectReason ? new Promise((function(i) {
-      (0, a.default)({
-        url: t,
+
+  /**
+   * 附件处理：图片预览或文档打开
+   */
+  onClickFile: function(e) {
+    const fileUrl = e.currentTarget.dataset.file;
+    const ext = fileUrl.slice(fileUrl.lastIndexOf(".") + 1).toLowerCase();
+    const imgExts = ["jpg", "jpeg", "png", "gif", "webp", "svg"];
+
+    if (imgExts.includes(ext)) {
+      wx.previewImage({ current: fileUrl, urls: [fileUrl] });
+    } else {
+      wx.showLoading({ title: "加载中..." });
+      wx.downloadFile({
+        url: fileUrl,
+        success: (res) => {
+          if (res.statusCode === 200) {
+            wx.openDocument({
+              filePath: res.tempFilePath,
+              showMenu: true,
+              fail: () => Toast.fail("无法打开此格式文档")
+            });
+          }
+        },
+        complete: () => wx.hideLoading()
+      });
+    }
+  },
+
+  /**
+   * 审批通过
+   */
+  handleApprove: function(payload) {
+    const self = this;
+    Dialog.confirm({
+      title: "确定通过吗？",
+      beforeClose: (action) => {
+        return new Promise((resolve) => {
+          if (action === 'confirm') {
+            request({
+              url: payload.url,
+              method: "POST",
+              data: {
+                id: self.data.entityId,
+                auditStatus: 1, // 1 代表通过
+                formKey: self.data.formKey,
+                taskKey: self.data.taskKey
+              }
+            }).then(() => {
+              resolve(true);
+              Toast.success("已通过");
+              self.navigateBack();
+            }).catch(() => {
+              resolve(false);
+              Toast.fail("审批失败");
+            });
+          } else {
+            resolve(true);
+          }
+        });
+      }
+    });
+  },
+
+  /**
+   * 审批驳回逻辑（点击驳回按钮时先弹框输入原因）
+   */
+  handleReject: function() {
+    this.setData({ showRejectDialog: true });
+    setTimeout(() => {
+      this.setData({ rejectDialogFocus: true });
+    }, 200);
+  },
+
+  /**
+   * 驳回弹窗关闭前的提交逻辑
+   */
+  handleBeforeClose: function(apiUrl, action) {
+    if (action === 'cancel') return Promise.resolve(true);
+    
+    if (!this.data.rejectReason) {
+      wx.showToast({ title: "请输入驳回原因", icon: "none" });
+      return Promise.resolve(false);
+    }
+
+    return new Promise((resolve) => {
+      request({
+        url: apiUrl,
         method: "POST",
         data: {
-          id: n.data.entityId,
-          auditStatus: 2,
-          formKey: n.data.formKey,
-          taskKey: n.data.taskKey,
-          auditRemarks: n.data.rejectReason
+          id: this.data.entityId,
+          auditStatus: 2, // 2 代表驳回
+          formKey: this.data.formKey,
+          taskKey: this.data.taskKey,
+          auditRemarks: this.data.rejectReason
         }
-      }).then((function() {
-        e.default.success("已驳回"), i(!0), n.navigateBack()
-      })).catch((function(t) {
-        e.default.fail(t.msg), i(!0)
-      }))
-    })) : (wx.showToast({
-      title: "请输入内容",
-      icon: "none"
-    }), Promise.resolve(!1))
+      }).then(() => {
+        Toast.success("已驳回");
+        resolve(true);
+        this.navigateBack();
+      }).catch(err => {
+        Toast.fail(err.msg || "驳回失败");
+        resolve(true);
+      });
+    });
   },
-  handleReject: function() {
-    var t = this;
-    this.setData({
-      showRejectDialog: !0
-    }), setTimeout((function() {
-      t.setData({
-        rejectDialogFocus: !0
-      })
-    }), 200)
-  },
-  uploadFiles: function(i) {
-    var n = this,
-      s = i.url,
-      o = i.field;
+
+  /**
+   * 文件上传逻辑（支持批量上传后保存到业务单据）
+   */
+  uploadFiles: function(payload) {
+    const self = this;
+    const { url: saveUrl, field: fieldName } = payload;
+
     wx.chooseMedia({
-      count: 100,
+      count: 9,
       mediaType: ["image", "video"],
-      sourceType: ["album", "camera"],
-      success: function(i) {
-        var l = wx.getStorageSync("token"),
-          r = wx.getStorageSync("tokenName"),
-          u = e.default.loading({
-            duration: 0,
-            forbidClick: !0,
-            message: "上传中...",
-            selector: "#custom-selector"
-          }),
-          c = i.tempFiles.map((function(a) {
-            return function(a, i, n) {
-              return new Promise((function(s) {
-                wx.uploadFile({
-                  url: "https://admin.sh-zktx.com/apit/general/file/upload",
-                  filePath: a,
-                  name: "file",
-                  header: t({}, n, i),
-                  success: function(t) {
-                    e.default.clear();
-                    var a = JSON.parse(t.data);
-                    200 === a.code ? s(a.data) : s("")
-                  },
-                  fail: function() {
-                    s("")
-                  }
-                })
-              }))
-            }(a.tempFilePath, l, r)
-          }));
-        Promise.all(c).then((function(t) {
-          return t.filter(Boolean)
-        })).then((function(i) {
-          return e.default.clear(), 0 === i.length ? (u.setData({
-            message: "上传失败"
-          }), void e.default.clear()) : (c.length > i.length && (0, e.default)("部分上传成功"), c.length === i.length && (0, e.default)("上传成功"), u.setData({
-            message: "保存中..."
-          }), (0, a.default)({
-            url: s,
+      success: (res) => {
+        const token = wx.getStorageSync("token");
+        const tokenName = wx.getStorageSync("tokenName");
+        
+        Toast.loading({ message: "上传中...", forbidClick: true, duration: 0 });
+
+        // 构造上传 Promise 队列
+        const uploadTasks = res.tempFiles.map(file => {
+          return new Promise((resolve) => {
+            wx.uploadFile({
+              url: "https://admin.sh-zktx.com/apit/general/file/upload",
+              filePath: file.tempFilePath,
+              name: "file",
+              header: { [tokenName]: token },
+              success: (uploadRes) => {
+                const data = JSON.parse(uploadRes.data);
+                resolve(data.code === 200 ? data.data : "");
+              },
+              fail: () => resolve("")
+            });
+          });
+        });
+
+        Promise.all(uploadTasks).then(urls => {
+          const validUrls = urls.filter(u => u !== "");
+          if (validUrls.length === 0) {
+            Toast.fail("上传失败");
+            return;
+          }
+
+          Toast.loading({ message: "保存中...", forbidClick: true });
+
+          // 将上传成功的 URL 拼接到业务单据中
+          request({
+            url: saveUrl,
             method: "POST",
-            data: t({
-              id: n.data.entityId,
-              formKey: n.data.formKey,
-              taskKey: n.data.taskKey
-            }, o, i.join(","))
-          }), c.length === i.length)
-        })).then((function(t) {
-          t && n.navigateBack()
-        }))
+            data: {
+              id: self.data.entityId,
+              formKey: self.data.formKey,
+              taskKey: self.data.taskKey,
+              [fieldName]: validUrls.join(",")
+            }
+          }).then(() => {
+            Toast.success("保存成功");
+            self.navigateBack();
+          });
+        });
       }
-    })
+    });
+  },
+
+  showWorkflow: function() {
+    this.fetchWorkflow(this.data.processInstanceId);
+    this.setData({ showFlow: true });
+  },
+
+  closeWorkflow: function() {
+    this.setData({ showFlow: false });
+  },
+
+  navigateBack: function() {
+    const pages = getCurrentPages();
+    if (pages.length > 1) {
+      // 通知上一页需要刷新
+      pages[pages.length - 2].setData({ refreshWhenShow: true });
+    }
+    wx.navigateBack();
   }
 });

@@ -1,174 +1,218 @@
-var t, a = require("../../@babel/runtime/helpers/slicedToArray"),
-  e = (t = require("../../utils/request")) && t.__esModule ? t : {
-    default: t
-  },
-  s = require("../../utils/util");
+import request from '../../utils/request'
+import { getDayRange } from '../../utils/util'
+
 Page({
   data: {
-    userId: "",
-    keyword: "",
-    startDate: "",
-    endDate: "",
-    statusLabel: "",
+    userId: '',
+    keyword: '',
+    startDate: '',
+    endDate: '',
+    statusLabel: '', // 过滤状态：待处理、已处理、全部
     minDate: new Date(2020, 0, 1).getTime(),
-    maxDate: (new Date).getTime(),
-    formatedDate: "",
-    showCalendar: !1,
-    showPicker: !1,
-    statusColumns: ["全部", "待处理", "已处理"],
-    refreshWhenShow: !1,
+    maxDate: new Date().getTime(),
+    formatedDate: '',
+    showCalendar: false,
+    showPicker: false,
+    statusColumns: ['全部', '待处理', '已处理'],
+    refreshWhenShow: false, // 详情页返回时是否触发刷新
     taskList: [],
     page: 1,
-    loading: !1,
-    finished: !1
+    loading: false,
+    finished: false,
   },
+
   _searchTimer: null,
-  onShow: function() {
-    "function" == typeof this.getTabBar && this.getTabBar() && this.getTabBar().setData({
-      selected: 0
-    }), wx.setNavigationBarTitle({
-      title: "任务列表"
-    }), this.data.refreshWhenShow && (this.fetchTasks(!0), this.setData({
-      refreshWhenShow: !1
-    }))
-  },
-  onLoad: function() {
-    var t, a = (null === (t = wx.getStorageSync("userInfo")) || void 0 === t ? void 0 : t.id) || "";
-    this.setData({
-      userId: a
-    }), this.fetchTasks(!0)
-  },
-  fetchTasks: function() {
-    var t = this,
-      a = arguments.length > 0 && void 0 !== arguments[0] && arguments[0];
-    if (!this.data.loading && (a && this.setData({
-        page: 1,
-        finished: !1,
-        taskList: []
-      }), !this.data.finished)) {
-      this.setData({
-        loading: !0
-      });
-      var i = {
-        "待处理": 0,
-        "已处理": 1
-      };
-      (0, e.default)({
-        url: "/task/workflowTask",
-        method: "POST",
-        data: {
-          executor: this.data.userId,
-          page: this.data.page,
-          pageSize: 10,
-          state: i[this.data.statusLabel],
-          name: this.data.keyword || void 0,
-          rangeQueryDtoList: this.data.startDate ? [{
-            name: "created",
-            startValue: (0, s.getDayRange)(this.data.startDate).startTime,
-            endValue: (0, s.getDayRange)(this.data.endDate).endTime
-          }] : void 0
-        }
-      }).then((function(a) {
-        t.setData({
-          taskList: t.data.taskList.concat(a.data.list),
-          page: t.data.page + 1,
-          finished: 10 * t.data.page >= a.data.total
-        })
-      })).catch((function() {
-        t.data.finished = !1
-      })).finally((function() {
-        t.setData({
-          loading: !1
-        })
-      }))
+
+  onShow: function () {
+    // 处理自定义 TabBar 选中态
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 0 })
+    }
+
+    wx.setNavigationBarTitle({ title: '任务 list' })
+
+    // 检查是否需要刷新（通常由详情页操作后触发）
+    if (this.data.refreshWhenShow) {
+      this.fetchTasks(true)
+      this.setData({ refreshWhenShow: false })
     }
   },
-  onSearch: function(t) {
-    this.setData({
-      keyword: t.detail
-    }), this.fetchTasks(!0)
+
+  onLoad: function () {
+    const userInfo = wx.getStorageSync('userInfo')
+    const userId = (userInfo && userInfo.id) || ''
+
+    this.setData({ userId })
+    this.fetchTasks(true) // 首次进入加载
   },
-  onSearchChange: function(t) {
-    var a = this,
-      e = t.detail;
-    this.setData({
-      keyword: e
-    }), this._searchTimer && clearTimeout(this._searchTimer), this._searchTimer = setTimeout((function() {
-      a.onSearch(t)
-    }), 500)
-  },
-  showCalendar: function() {
-    this.setData({
-      showCalendar: !0
-    }), "function" == typeof this.getTabBar && this.getTabBar() && this.getTabBar().setData({
-      showTab: !1
+
+  /**
+   * 获取任务列表数据
+   * @param {Boolean} isRefresh 是否重置列表（用于搜索、筛选、下拉刷新）
+   */
+  fetchTasks: function (isRefresh = false) {
+    if (this.data.loading) return
+
+    if (isRefresh) {
+      this.setData({
+        page: 1,
+        finished: false,
+        taskList: [],
+      })
+    }
+
+    if (this.data.finished) return
+
+    this.setData({ loading: true })
+
+    // 状态标签转为后端 API 定义的 state (0: 待处理, 1: 已处理)
+    const statusMap = { 待处理: 0, 已处理: 1 }
+
+    request({
+      url: '/task/workflowTask',
+      method: 'POST',
+      data: {
+        executor: this.data.userId,
+        page: this.data.page,
+        pageSize: 10,
+        state: statusMap[this.data.statusLabel],
+        name: this.data.keyword || undefined,
+        // 日期范围查询
+        rangeQueryDtoList: this.data.startDate
+          ? [
+              {
+                name: 'created',
+                startValue: getDayRange(this.data.startDate).startTime,
+                endValue: getDayRange(this.data.endDate).endTime,
+              },
+            ]
+          : undefined,
+      },
     })
+      .then((res) => {
+        const newList = res.data.list
+        const total = res.data.total
+
+        this.setData({
+          taskList: this.data.taskList.concat(newList),
+          page: this.data.page + 1,
+          // 判断是否已加载全部
+          finished: 10 * this.data.page >= total,
+        })
+      })
+      .catch(() => {
+        this.setData({ finished: false })
+      })
+      .finally(() => {
+        this.setData({ loading: false })
+      })
   },
-  onClearDate: function() {
-    this.setData({
-      startDate: "",
-      endDate: "",
-      formatedDate: ""
-    }), this.fetchTasks(!0)
+
+  /**
+   * 搜索框确认搜索
+   */
+  onSearch: function (e) {
+    this.setData({ keyword: e.detail })
+    this.fetchTasks(true)
   },
-  onCalendarClose: function() {
+
+  /**
+   * 搜索框输入时触发（带 500ms 防抖）
+   */
+  onSearchChange: function (e) {
+    const value = e.detail
+    this.setData({ keyword: value })
+
+    if (this._searchTimer) clearTimeout(this._searchTimer)
+
+    this._searchTimer = setTimeout(() => {
+      this.onSearch(e)
+    }, 500)
+  },
+
+  /**
+   * 日期筛选相关逻辑
+   */
+  showCalendar: function () {
+    this.setData({ showCalendar: true })
+    // 弹出日历时隐藏 TabBar 防止遮挡
+    if (this.getTabBar()) this.getTabBar().setData({ showTab: false })
+  },
+
+  onClearDate: function () {
     this.setData({
-      showCalendar: !1
-    }), "function" == typeof this.getTabBar && this.getTabBar() && this.getTabBar().setData({
-      showTab: !0
+      startDate: '',
+      endDate: '',
+      formatedDate: '',
     })
+    this.fetchTasks(true)
   },
-  onCalendarConfirm: function(t) {
-    var e = a(t.detail, 2),
-      s = e[0],
-      i = e[1];
+
+  onCalendarClose: function () {
+    this.setData({ showCalendar: false })
+    if (this.getTabBar()) this.getTabBar().setData({ showTab: true })
+  },
+
+  onCalendarConfirm: function (e) {
+    const [start, end] = e.detail
     this.setData({
-      showCalendar: !1,
-      startDate: s,
-      endDate: i
-    }), this.setData({
-      formatedDate: this.deriveFormatedDate()
-    }), this.fetchTasks(!0), "function" == typeof this.getTabBar && this.getTabBar() && this.getTabBar().setData({
-      showTab: !0
+      showCalendar: false,
+      startDate: start,
+      endDate: end,
     })
+    this.setData({ formatedDate: this.deriveFormatedDate() })
+    this.fetchTasks(true)
+    if (this.getTabBar()) this.getTabBar().setData({ showTab: true })
   },
-  formatDate: function(t) {
-    return "".concat(t.getMonth() + 1, "/").concat(t.getDate())
+
+  formatDate: (date) => `${date.getMonth() + 1}/${date.getDate()}`,
+
+  deriveFormatedDate: function () {
+    const { startDate, endDate } = this.data
+    return startDate && endDate
+      ? `${this.formatDate(startDate)} - ${this.formatDate(endDate)}`
+      : ''
   },
-  deriveFormatedDate: function() {
-    var t = this.data.startDate,
-      a = this.data.endDate;
-    return t && a ? "".concat(this.formatDate(t), " - ").concat(this.formatDate(a)) : ""
+
+  /**
+   * 状态筛选相关逻辑 (待处理/已处理)
+   */
+  showStatusPicker: function () {
+    this.setData({ showPicker: true })
   },
-  showStatusPicker: function() {
+
+  onPickerConfirm: function (e) {
+    const value = e.detail.value
     this.setData({
-      showPicker: !0
+      showPicker: false,
+      statusLabel: value === '全部' ? '' : value,
     })
+    this.fetchTasks(true)
   },
-  onPickerClose: function() {
-    this.setData({
-      showPicker: !1
-    })
+
+  onPickerClose: function () {
+    this.setData({ showPicker: false })
   },
-  onPickerConfirm: function(t) {
-    var a = t.detail.value;
-    this.setData({
-      showPicker: !1,
-      statusLabel: "全部" === a ? "" : a
-    }), this.fetchTasks(!0)
-  },
-  loadMore: function() {
+
+  /**
+   * 列表触底加载更多
+   */
+  loadMore: function () {
     this.fetchTasks()
   },
-  goToDetail: function(t) {
-    var a = t.currentTarget.dataset,
-      e = a.id,
-      s = a.status,
-      i = a.processDefinitionId,
-      n = a.processInstanceId,
-      o = a.formKey;
-    wx.navigateTo({
-      url: "/pages/taskDetail/taskDetail?id=".concat(e, "&status=").concat(s, "&processDefinitionId=").concat(i.split(":")[0], "&processInstanceId=").concat(n, "&formKey=").concat(o)
-    })
-  }
-});
+
+  /**
+   * 跳转至详情页
+   */
+  goToDetail: function (e) {
+    const { id, status, processdefinitionid, processinstanceid, formkey } =
+      e.currentTarget.dataset
+
+    // 注意：processDefinitionId 在 URL 传参时截取了冒号前的内容，与 config.js 的 Key 对应
+    const configKey = processdefinitionid.split(':')[0]
+
+    const url = `/pages/taskDetail/taskDetail?id=${id}&status=${status}&processDefinitionId=${configKey}&processInstanceId=${processinstanceid}&formKey=${formkey}`
+
+    wx.navigateTo({ url })
+  },
+})
