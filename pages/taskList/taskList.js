@@ -205,13 +205,13 @@ Page({
    * 跳转至详情页
    */
   goToDetail: function (e) {
-    const { id, status, processdefinitionid, processinstanceid, formkey } =
+    const { id, status, processDefinitionId, processInstanceId, formKey } =
       e.currentTarget.dataset
 
     // 注意：processDefinitionId 在 URL 传参时截取了冒号前的内容，与 config.js 的 Key 对应
-    const configKey = processdefinitionid.split(':')[0]
+    const configKey = processDefinitionId.split(':')[0]
 
-    const url = `/pages/taskDetail/taskDetail?id=${id}&status=${status}&processDefinitionId=${configKey}&processInstanceId=${processinstanceid}&formKey=${formkey}`
+    const url = `/pages/taskDetail/taskDetail?id=${id}&status=${status}&processDefinitionId=${configKey}&processInstanceId=${processInstanceId}&formKey=${formKey}`
 
     wx.navigateTo({ url })
   },
