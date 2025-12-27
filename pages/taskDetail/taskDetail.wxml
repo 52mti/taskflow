@@ -38,7 +38,7 @@
         </view>
     </van-dialog>
     <van-dialog id="van-dialog"></van-dialog>
-    <van-toast id="custom-selector"></van-toast>
+    <van-toast id="van-toast"></van-toast>
 </view>
 
 <wxs module="utils">

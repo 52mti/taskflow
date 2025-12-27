@@ -163,8 +163,11 @@ Page({
           if (res.statusCode === 200) {
             wx.openDocument({
               filePath: res.tempFilePath,
+              fileType: ext,
               showMenu: true,
-              fail: () => Toast.fail("无法打开此格式文档")
+              fail: (err) => {
+                Toast.fail("无法打开此格式文档")
+              }
             });
           }
         },
