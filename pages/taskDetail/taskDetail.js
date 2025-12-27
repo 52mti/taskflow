@@ -55,7 +55,6 @@ Page({
    * 获取业务表单详情
    */
   fetchTaskDetail: function(id, configKey) {
-    const self = this;
     const pageConfig = CONFIG[configKey];
 
     request({
@@ -64,6 +63,7 @@ Page({
       data: { id }
     }).then(res => {
       const serverData = res.data;
+      this.__initialData = serverData
       
       // 设置导航栏标题
       wx.setNavigationBarTitle({ title: pageConfig.title || "详情" });
@@ -74,11 +74,11 @@ Page({
       // 2. 预设驳回逻辑的拦截器
       const rejectBtn = visibleButtons.find(btn => btn.text === "驳回");
       
-      self.setData({
+      this.setData({
         btnList: visibleButtons,
         taskKey: serverData.taskKey,
         processInstanceId: serverData.processInstanceId,
-        handleBeforeClose: rejectBtn ? self.handleBeforeClose.bind(self, rejectBtn.actionPayload.url) : null
+        handleBeforeClose: rejectBtn ? this.handleBeforeClose.bind(this, rejectBtn.actionPayload.url) : null
       });
 
       // 3. 解析详情字段分组 (DetailKeyList)
@@ -111,7 +111,7 @@ Page({
         });
       }
 
-      self.setData({
+      this.setData({
         detailKeyList: fieldGroups,
         tabTableList: tabTables
       });
@@ -174,6 +174,11 @@ Page({
         complete: () => wx.hideLoading()
       });
     }
+  },
+
+  // 重新提交
+  handleReapply(payload) {
+    wx.navigateTo({ url: `/pages/taskEdit/taskEdit?type=${payload.type}&initialData=${encodeURIComponent(JSON.stringify(this.__initialData))}` })
   },
 
   /**

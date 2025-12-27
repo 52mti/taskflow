@@ -4,6 +4,7 @@
     "pages/login/login",
     "pages/taskList/taskList",
     "pages/taskDetail/taskDetail",
+    "pages/taskEdit/taskEdit",
     "pages/profile/profile"
   ],
   "tabBar": {

@@ -19,5 +19,17 @@
 		"ignoreDevUnusedFiles": true
 	},
 	"libVersion": "3.13.0",
-	"condition": {}
+	"condition": {
+		"miniprogram": {
+			"list": [
+				{
+					"name": "pages/taskEdit/taskEdit",
+					"pathName": "pages/taskEdit/taskEdit",
+					"query": "type=KEY_PAYMENT_ORDER",
+					"scene": null,
+					"launchMode": "default"
+				}
+			]
+		}
+	}
 }

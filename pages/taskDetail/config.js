@@ -868,7 +868,9 @@ const CONFIG_MAP = {
       {
         text: '重新提交',
         action: 'handleReapply',
-        actionPayload: { path: '' },
+        actionPayload: {
+          type: 'KEY_PAYMENT_ORDER',
+        },
         type: 'default',
         plain: true,
         isVisible: function (data) {
@@ -903,7 +905,7 @@ const CONFIG_MAP = {
             'form_payment_order_dsz_audit', // 董事长审核
             'form_payment_order_start', // 流程启动/初审
             'form_payment_order_zjl_audit', // 总经理审核
-          ].includes(data.formKey),
+          ].includes(data.formKey) && data.auditStatus !== 2,
       },
       {
         text: '通过',
@@ -919,7 +921,7 @@ const CONFIG_MAP = {
             'form_payment_order_dsz_audit',
             'form_payment_order_start',
             'form_payment_order_zjl_audit',
-          ].includes(data.formKey),
+          ].includes(data.formKey) && data.auditStatus !== 2,
       },
       {
         text: '上传打款凭证',
@@ -1338,7 +1340,11 @@ const CONFIG_MAP = {
         valueFormatter: formatDefault,
       },
       { key: 'name', title: '资料名称', valueFormatter: formatDefault },
-      { key: 'initFile', title: '初始竣工资料', valueFormatter: formatFileList },
+      {
+        key: 'initFile',
+        title: '初始竣工资料',
+        valueFormatter: formatFileList,
+      },
       {
         key: 'improveFile',
         title: '完善竣工资料',
