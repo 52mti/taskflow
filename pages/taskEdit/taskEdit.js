@@ -319,26 +319,15 @@ Page({
     wx.showLoading({ title: '提交中...', mask: true })
 
     try {
-      console.log('最终提交数据：', this.data.formData)
-
-      // 模拟接口调用
-      // await api.updateTask(this.data.formData);
-      const payload = {}
-      const config = JSON.parse(JSON.stringify(configs[this.__taskType] || [])) // 深拷贝防止污染原始配置
+      const config = JSON.parse(JSON.stringify(configs[this.__taskType] || []))
       const keys = config.map((item) => item.key)
-      keys.forEach(key => {
-        const value = this.data.formData[key]
-        if (typeof value === 'number') {
-          payload[key] = Number.parseInt(value)
-        } else {
-          payload[key] = value
-        }
-      })
-      await request({
+
+      const response = await request({
         url: apiPathMap[this.__taskType],
         method: 'POST',
         data: {
-          ...payload,
+          ...this.data.formData,
+          editFieldList: keys,
           auditStatus: null,
           formKey: this.__formData.formKey,
           id: this.__formData.id,
@@ -346,11 +335,16 @@ Page({
       })
       wx.hideLoading()
       wx.showToast({
-        title: '提交成功',
+        title: response.msg,
         icon: 'success',
         success: () => {
           // 提交成功后延迟返回上一页
-          setTimeout(() => wx.navigateBack(), 1500)
+          const pages = getCurrentPages();
+          if (pages.length > 1) {
+            // 通知上2页需要刷新
+            pages[pages.length - 3].setData({ refreshWhenShow: true });
+          }
+          setTimeout(() => wx.navigateBack({ delta: 2 }), 1500)
         },
       })
     } catch (err) {
