@@ -1,49 +1,6 @@
 <view class="page-wrapper">
   <scroll-view scroll-y class="content-scroll">
-    <van-cell-group title="任务编辑">
-      <block wx:for="{{formItems}}" wx:key="key">
-        
-        <van-field
-          wx:if="{{item.type === 'text' || item.type === 'textarea' || item.type === 'number'}}"
-          type="{{item.type}}"
-          label="{{item.label}}"
-          required="{{item.required}}"
-          placeholder="{{item.placeholder}}"
-          value="{{formData[item.key]}}"
-          data-key="{{item.key}}"
-          autosize="{{ { maxHeight: 100, minHeight: 50 } }}"
-          bind:blur="onInputChange" 
-        />
-
-        <van-field
-          wx:elif="{{item.type === 'picker'}}"
-          label="{{item.label}}"
-          required="{{item.required}}"
-          value="{{pickerMap[formData[item.key]]}}"
-          placeholder="请选择"
-          readonly
-          is-link
-          bindtap="showPicker"
-          data-key="{{item.key}}"
-        />
-
-        <van-cell wx:elif="{{item.type === 'file'}}" required="{{item.required}}" title="{{item.label}}" direction="vertical">
-          <view class="file-container">
-            <view class="file-list">
-              <view class="file-item" wx:for="{{formData[item.key]}}" wx:for-item="file" wx:key="path">
-                <text data-path="{{file.path}}" bindtap="previewFile">{{file.name}}</text>
-                <van-tag closeable type="primary" size="medium" catch:close="deleteFile" data-key="{{item.key}}" data-index="{{index}}" >
-                </van-tag>
-              </view>
-            </view>
-            <van-button class="upload-btn" icon="plus" size="small" plain type="info" bindtap="chooseAndUpload" data-key="{{item.key}}" data-config="{{item}}">
-              上传文件
-            </van-button>
-          </view>
-        </van-cell>
-
-      </block>
-    </van-cell-group>
+    <form-edit form-items="{{formItems}}" form-data="{{formData}}"></form-edit>
   </scroll-view>
 
   <van-goods-action>
@@ -57,23 +14,4 @@
       bind:click="submitForm"
     />
   </van-goods-action>
-
-  <van-popup show="{{ showPicker }}" position="bottom" bind:close="onPickerClose">
-    <van-picker
-      show-toolbar
-      columns="{{ currentColumns }}"
-      value-key="value"
-      bind:confirm="onPickerConfirm"
-      bind:cancel="onPickerClose"
-    />
-  </van-popup>
 </view>
-
-<wxs module="utils">
-var deriveName = (function(map, key) {
-  return map[key].value
-});
-module.exports = ({
-  deriveName: deriveName,
-});
-</wxs>

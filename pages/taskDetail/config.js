@@ -89,7 +89,7 @@ const CONFIG_MAP = {
       {
         text: '重新提交',
         action: 'handleReapply',
-        actionPayload: { path: '' },
+        actionPayload: { type: 'KEY_SUPPLIER' },
         type: 'default',
         plain: true,
         isVisible: function (data) {
@@ -227,7 +227,7 @@ const CONFIG_MAP = {
       {
         text: '重新提交',
         action: 'handleReapply',
-        actionPayload: { path: '' },
+        actionPayload: { type: 'KEY_CONSTRUCTION_TEAM' },
         type: 'default',
         plain: true,
         isVisible: function (data) {
@@ -394,7 +394,7 @@ const CONFIG_MAP = {
       {
         text: '重新提交',
         action: 'handleReapply',
-        actionPayload: { path: '' },
+        actionPayload: { type: 'KEY_DISTRIBUTION_PROJECT' },
         type: 'default',
         plain: true,
         isVisible: function (data) {
@@ -528,7 +528,7 @@ const CONFIG_MAP = {
       {
         text: '重新提交',
         action: 'handleReapply',
-        actionPayload: { path: '' },
+        actionPayload: { type: 'KEY_PROJECT_CO_OPERATION' },
         type: 'default',
         plain: true,
         isVisible: function (data) {
@@ -595,7 +595,7 @@ const CONFIG_MAP = {
       {
         text: '重新提交',
         action: 'handleReapply',
-        actionPayload: { path: '' },
+        actionPayload: { type: 'KEY_AUDIT_FEE' },
         type: 'default',
         plain: true,
         isVisible: function (data) {
@@ -740,7 +740,7 @@ const CONFIG_MAP = {
       {
         text: '重新提交',
         action: 'handleReapply',
-        actionPayload: { path: '' },
+        actionPayload: { type: 'KEY_PURCHASE_ORDER' },
         type: 'default',
         plain: true,
         isVisible: function (data) {
@@ -903,9 +903,8 @@ const CONFIG_MAP = {
             'form_payment_order_zdb_audit', // 总部审核
             'form_payment_order_cwb_audit', // 财务审核
             'form_payment_order_dsz_audit', // 董事长审核
-            'form_payment_order_start', // 流程启动/初审
             'form_payment_order_zjl_audit', // 总经理审核
-          ].includes(data.formKey) && data.auditStatus !== 2,
+          ].includes(data.formKey),
       },
       {
         text: '通过',
@@ -919,9 +918,8 @@ const CONFIG_MAP = {
             'form_payment_order_zdb_audit',
             'form_payment_order_cwb_audit',
             'form_payment_order_dsz_audit',
-            'form_payment_order_start',
             'form_payment_order_zjl_audit',
-          ].includes(data.formKey) && data.auditStatus !== 2,
+          ].includes(data.formKey),
       },
       {
         text: '上传打款凭证',
@@ -1014,7 +1012,7 @@ const CONFIG_MAP = {
       {
         text: '重新提交',
         action: 'handleReapply',
-        actionPayload: { path: '' },
+        actionPayload: { type: 'KEY_INVOICE' },
         type: 'default',
         plain: true,
         isVisible: function (data) {
@@ -1115,6 +1113,11 @@ const CONFIG_MAP = {
       {
         text: '重新提交',
         action: 'handleReapply',
+        actionPayload: {
+          type: 'KEY_DEPOSIT',
+        },
+        plain: true,
+        type: 'default',
         isVisible: function (data) {
           var user = wx.getStorageSync('userInfo')
           var userId = (user ? user.id : '') || ''
@@ -1127,6 +1130,8 @@ const CONFIG_MAP = {
       },
       {
         text: '流程',
+        plain: true,
+        type: 'default',
         action: 'showWorkflow',
         isVisible: function () {
           return true
@@ -1246,6 +1251,9 @@ const CONFIG_MAP = {
       {
         text: '重新提交',
         action: 'handleReapply',
+        actionPayload: { type: 'KEY_PAYMENT_ORDER' },
+        plain: true,
+        type: 'default',
         isVisible: function (data) {
           var user = wx.getStorageSync('userInfo')
           var userId = (user ? user.id : '') || ''
@@ -1259,6 +1267,8 @@ const CONFIG_MAP = {
       {
         text: '流程',
         action: 'showWorkflow',
+        plain: true,
+        type: 'default',
         isVisible: function () {
           return true
         },
@@ -1373,7 +1383,7 @@ const CONFIG_MAP = {
       {
         text: '重新提交',
         action: 'handleReapply',
-        actionPayload: { path: '' },
+        actionPayload: { type: 'KEY_COMPLETION' },
         type: 'default',
         plain: true,
         isVisible: function (data) {

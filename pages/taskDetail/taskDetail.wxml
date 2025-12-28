@@ -34,7 +34,7 @@
     </van-popup>
     <van-dialog showCancelButton useSlot beforeClose="{{handleBeforeClose}}" bind:close="onCancelReject" bind:confirm="onConfirmReject" show="{{showRejectDialog}}" title="驳回原因">
         <view class="dialog-content">
-            <van-field autoSize adjustPosition="{{true}}" autosize="{{({minHeight:70})}}" border="{{false}}" cursorSpacing="140" focus="{{rejectDialogFocus}}" value="{{rejectReason}}" placeholder="请输入驳回原因" type="textarea"></van-field>
+            <van-field autoSize adjustPosition="{{true}}" autosize="{{({minHeight:70})}}" border="{{false}}" cursorSpacing="140" focus="{{rejectDialogFocus}}" value="{{rejectReason}}" bind:input="onFieldChange" placeholder="请输入驳回原因" type="textarea"></van-field>
         </view>
     </van-dialog>
     <van-dialog id="van-dialog"></van-dialog>

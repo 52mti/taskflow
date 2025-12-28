@@ -226,6 +226,15 @@ Page({
     }, 200);
   },
 
+  onFieldChange(e) {
+    // Vant 的值在 e.detail 中，原生 input 的值在 e.detail.value 中
+    const value = e.detail; 
+
+    this.setData({
+      rejectReason: value
+    });
+  },
+    
   /**
    * 驳回弹窗关闭前的提交逻辑
    */

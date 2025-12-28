@@ -1,17 +1,23 @@
 <view class="table-container">
-    <scroll-view class="table-scroll-view" scrollX="true">
-        <view class="table">
-            <view class="table-header">
-                <view class="th" style="width:{{item.width}}rpx;" wx:for="{{tableHeadList}}" wx:key="index">{{item.value}}</view>
-            </view>
-            <view class="table-row" wx:for="{{tableBodyList}}" wx:for-item="rowData" wx:key="id">
-                <view bind:tap="onClickCell" class="td" data-value="{{rowData[item.key]}}" style="width:{{item.width}}rpx;color:{{item.valueType==='url'?'#1989fa':''}};" wx:for="{{tableHeadList}}" wx:key="key">{{utils.formatValue(rowData[item.key],item.valueType)}}</view>
-            </view>
+  <scroll-view class="table-scroll-view" scrollX="true">
+    <view class="table">
+      <view class="table-header">
+        <view class="th" style="width:{{item.width}}rpx;" wx:for="{{tableHeadList}}" wx:key="index">
+          {{item.value}}
         </view>
-    </scroll-view>
-    <van-empty description="暂无数据" wx:if="{{tableBodyList.length===0}}"></van-empty>
+      </view>
+      <view class="table-row" wx:for="{{tableBodyList}}" wx:for-item="rowData" wx:for-index="rowIndex" wx:key="id">
+        <view wx:for="{{tableHeadList}}" wx:key="key" bind:tap="onClickCell" class="td" data-value="{{rowData[item.key]}}" style="width:{{item.width}}rpx;color:{{item.valueType==='url'?'#1989fa':''}};">
+          <block wx:if="{{!item.useSlot}}">{{utils.formatValue(rowData[item.key],item.valueType)}}</block>
+          <block wx:else>
+            <slot name="{{item.key}}" slot-data="{{ {row: rowData, index: rowIndex} }}"></slot>
+          </block>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+  <van-empty description="暂无数据" wx:if="{{tableBodyList.length===0}}"></van-empty>
 </view>
-
 <wxs module="utils">
 var formatValue = (function(val, valueType) {
   if (valueType === 'amount') {

@@ -1,0 +1,80 @@
+<van-cell-group>
+  <block wx:for="{{formItems}}" wx:key="key">
+    <van-divider wx:if="{{item.type === 'divider'}}" contentPosition="left">{{item.label}}</van-divider>
+    <van-field
+      wx:if="{{item.type === 'text' || item.type === 'textarea' || item.type === 'number'}}"
+      type="{{item.type}}"
+      label="{{item.label}}"
+      required="{{item.required}}"
+      placeholder="{{item.placeholder || ''}}"
+      value="{{formData[item.key]}}"
+      data-key="{{item.key}}"
+      disabled="{{item.disabled}}"
+      autosize="{{ { maxHeight: 100, minHeight: 50 } }}"
+      bind:blur="onInputChange" 
+    />
+
+    <van-field
+      wx:elif="{{item.type === 'dynamicPicker' || item.type === 'picker'}}"
+      label="{{item.label}}"
+      required="{{item.required}}"
+      value="{{pickerMap[formData[item.key]]}}"
+      placeholder="请选择"
+      readonly
+      is-link
+      bindtap="showPicker"
+      data-key="{{item.key}}"
+    />
+
+    <van-cell wx:if="{{item.type === 'date'}}" title="选择日期" data-key="{{item.key}}" value="{{ formData[item.key] }}" bind:click="onCalendarDisplay" />
+
+    <van-cell wx:elif="{{item.type === 'file'}}" required="{{item.required}}" title="{{item.label}}" direction="vertical">
+      <view class="file-container">
+        <view class="file-list">
+          <view class="file-item" wx:for="{{formData[item.key]}}" wx:for-item="file" wx:key="path">
+            <text data-path="{{file.path}}" bindtap="previewFile">{{file.name}}</text>
+            <van-tag closeable type="primary" size="medium" catch:close="deleteFile" data-key="{{item.key}}" data-index="{{index}}" >
+            </van-tag>
+          </view>
+        </view>
+        <van-button class="upload-btn" icon="plus" size="small" plain type="info" bindtap="chooseAndUpload" data-key="{{item.key}}" data-config="{{item}}">
+          上传文件
+        </van-button>
+      </view>
+    </van-cell>
+
+    <view wx:if="{{item.type === 'tableForm'}}">
+      <van-tabs wx:if="{{item.tabList.length >= 2}}" active="{{ active }}" bind:change="onTabChange">
+        <van-tab title="标签 1">内容 1</van-tab>
+        <van-tab title="标签 2">内容 2</van-tab>
+        <van-tab title="标签 3">内容 3</van-tab>
+        <van-tab title="标签 4">内容 4</van-tab>
+      </van-tabs>
+      <block wx:else>
+        <van-button type="info" bind:click="handleAddForm">添加{{item.label}}</van-button>
+        <custom-table tableBodyList="{{formData[item.tabList[0].key]}}" tableHeadList="{{item.tabList[0].headerList}}">
+          <view slot="action">
+            <van-button size="mini" type="info" bindtap="onEdit">修改</van-button>
+            <van-button size="mini" type="danger" bindtap="onDelete">删除</van-button>
+          </view>
+        </custom-table>
+      </block>
+      <van-popup show="{{ showPopup }}" custom-style="width: 100%; height: 100%;" position="right" bind:close="onPopupClose">
+        <form-edit form-items="{{item.tabList[active].formSchema}}" form-data="{{formData[item.tabList[active].key]}}"></form-edit>
+      </van-popup>
+    </view>
+  </block>
+
+
+  <van-calendar show="{{ showCalendar }}" bind:close="onCalendarClose" bind:confirm="onCalendarConfirm" />
+
+  <van-popup show="{{ showPicker }}" position="bottom" bind:close="onPickerClose">
+    <van-picker
+      show-toolbar
+      columns="{{ currentColumns }}"
+      value-key="value"
+      bind:confirm="onPickerConfirm"
+      bind:cancel="onPickerClose"
+    />
+  </van-popup>
+</van-cell-group>

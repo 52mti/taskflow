@@ -25,6 +25,10 @@
   margin-bottom: 10rpx;
 }
 
+.van-cell__value {
+  text-align: left !important;
+}
+
 .van-cell__title {
   max-width: 6.2em;
   min-width: 6.2em;
