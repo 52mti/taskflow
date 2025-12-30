@@ -11,6 +11,7 @@
     "van-calendar": "@vant/weapp/calendar/index",
     "van-goods-action-button": "@vant/weapp/goods-action-button/index",
     "van-tag": "@vant/weapp/tag/index",
+    "van-nav-bar": "@vant/weapp/nav-bar/index",
     "van-divider": "@vant/weapp/divider/index",
     "form-edit": "./form-edit",
     "custom-table": "../custom-table/index"

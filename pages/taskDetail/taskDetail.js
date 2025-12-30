@@ -2,6 +2,7 @@ import Toast from '@vant/weapp/toast/toast';
 import Dialog from '@vant/weapp/dialog/dialog';
 import request from '../../utils/request';
 import CONFIG from './config';
+import config from '../../config';
 
 Page({
   data: {
@@ -288,7 +289,7 @@ Page({
         const uploadTasks = res.tempFiles.map(file => {
           return new Promise((resolve) => {
             wx.uploadFile({
-              url: "https://admin.sh-zktx.com/apit/general/file/upload",
+              url: `${config.baseUrl}/general/file/upload`,
               filePath: file.tempFilePath,
               name: "file",
               header: { [tokenName]: token },

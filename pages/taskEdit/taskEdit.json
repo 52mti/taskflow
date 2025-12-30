@@ -1,4 +1,5 @@
 {
+  "navigationStyle": "custom",
   "usingComponents": {
     "van-field": "@vant/weapp/field/index",
     "van-picker": "@vant/weapp/picker/index",
@@ -9,6 +10,7 @@
     "van-goods-action": "@vant/weapp/goods-action/index",
     "van-calendar": "@vant/weapp/calendar/index",
     "van-goods-action-button": "@vant/weapp/goods-action-button/index",
+    "van-nav-bar": "@vant/weapp/nav-bar/index",
     "van-tag": "@vant/weapp/tag/index",
     "form-edit": "/components/form-edit/form-edit"
   }

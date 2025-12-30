@@ -1,6 +1,11 @@
 // pages/task-edit/index.js
 import { configs, apiPathMap } from './formConfigs'
-import { findChildrenByCode, getCustomer, getMaterial, getSupplier } from '../../utils/https'
+import {
+  findChildrenByCode,
+  getCustomer,
+  getMaterial,
+  getSupplier,
+} from '../../utils/https'
 import { PaymentOrderBusinessType } from '../../utils/const'
 import request from '../../utils/request'
 
@@ -42,74 +47,99 @@ Page({
     await this.initDynamicColumns()
   },
 
+  updateFormItems(e) {
+    console.log('event: changeFormData',e)
+    this.setData({ formItems: e.detail })
+  },
+
   async initDynamicColumns() {
     const { formItems } = this.data
 
-    // 找出所有需要动态获取数据的配置项
-    const updatedItems = await Promise.all(
-      formItems.map(async (item) => {
+    // 1. 定义一个纯粹的递归处理函数
+    const fillColumns = async (items) => {
+      return Promise.all(items.map(async (item) => {
+        // 处理 dynamicPicker 类型
         if (item.type === 'dynamicPicker' && item.apiType) {
           try {
-            const data = await this.fetchDataByApi(item.apiType, item.apiKey)
-            const pickerMap = data.reduce((result, current) => {
-              return { ...result, [current.key]: current.value }
-            }, {})
-            this.setData({
-              pickerMap: { ...this.data.pickerMap, ...pickerMap },
-            })
-            item.columns = data // 将接口返回的数据注入配置
+            item.columns = await this.fetchDataByApi(item.apiType, item.apiKey);
           } catch (err) {
-            console.error(`加载 ${item.label} 选项失败`, err)
+            console.error(`加载 ${item.label} 选项失败`, err);
           }
         }
-        return item
-      })
-    )
+
+        // 处理嵌套结构（递归点）
+        if (item.type === 'tableForm' && item.tabList) {
+          await Promise.all(item.tabList.map(async (tab) => {
+            tab.formSchema = await fillColumns(tab.formSchema); // 递归调用
+          }));
+        }
+
+        return item;
+      }));
+    };
+
+    // 2. 执行并更新数据
+    const updatedItems = await fillColumns(formItems)
 
     this.setData({ formItems: updatedItems })
   },
 
-  // 模拟接口分发器
+  // 获取下拉选项
   async fetchDataByApi(apiType, apiKey) {
-    if (apiType === 'dictionary') {
-      const res = await findChildrenByCode(apiKey)
-      const options = res.data
+    const helper = async (apiType, apiKey) => {
+      if (apiType === 'dictionary') {
+        const res = await findChildrenByCode(apiKey)
+        const options = res.data
 
-      if (apiKey === 'PAYMENT_TYPE') {
-        return options.filter((item) => {
-          return {
-            [PaymentOrderBusinessType.BIDDING]: [
-              '601332103946174464',
-              '600090772762525696',
-              '601332632537530368',
-              '598675867320713216',
-            ],
-            [PaymentOrderBusinessType.PROJECT]: ['600090772762525696'],
-            [PaymentOrderBusinessType.ORDER]: ['600090880992346112'],
-            [PaymentOrderBusinessType.CUSTOMER]: ['600090772762525696'],
-            [PaymentOrderBusinessType.EXPENSE]: ['610560086649077760'],
-          }[this.data.businessType]?.includes(item.id)
-        }).map(option => ({ key: option.id, value: option.value }))
+        if (apiKey === 'PAYMENT_TYPE') {
+          return options
+            .filter((item) => {
+              return {
+                [PaymentOrderBusinessType.BIDDING]: [
+                  '601332103946174464',
+                  '600090772762525696',
+                  '601332632537530368',
+                  '598675867320713216',
+                ],
+                [PaymentOrderBusinessType.PROJECT]: ['600090772762525696'],
+                [PaymentOrderBusinessType.ORDER]: ['600090880992346112'],
+                [PaymentOrderBusinessType.CUSTOMER]: ['600090772762525696'],
+                [PaymentOrderBusinessType.EXPENSE]: ['610560086649077760'],
+              }[this.data.businessType]?.includes(item.id)
+            })
+            
+        }
       }
-    }
 
-    if (apiType === 'customer') {
-      const res = await getCustomer()
-      const options = res.data?.list || []
-      return options.map(option => ({ key: option.id, value: option.name }))
+      if (apiType === 'customer') {
+        const res = await getCustomer()
+        const options = res.data?.list || []
+        return options
+      }
+      if (apiType === 'material') {
+        const res = await getMaterial()
+        const options = res.data?.list || []
+        return options
+      }
+      if (apiType === 'supplier') {
+        const res = await getSupplier()
+        const options = res.data?.list || []
+        return options
+      }
+      // 其他接口...
+      return []
     }
-    if (apiType === 'material') {
-      const res = await getMaterial()
-      const options = res.data?.list || []
-      return options.map(option => ({ key: option.id, value: option.name }))
-    }
-    if (apiType === 'supplier') {
-      const res = await getSupplier()
-      const options = res.data?.list || []
-      return options.map(option => ({ key: option.id, value: option.name }))
-    }
-    // 其他接口...
-    return []
+    const columns = await helper(apiType, apiKey).map((option) => ({ ...option, key: option.id, value: option.name }))
+
+    // 更新下拉选项的key:value映射表
+    const pickerMap = columns.reduce((result, current) => {
+      return { ...result, [current.key]: current.value }
+    }, {})
+    this.setData({
+      pickerMap: { ...this.data.pickerMap, ...pickerMap },
+    })
+
+    return columns
   },
 
   // 核心校验函数
@@ -171,8 +201,8 @@ Page({
       const keys = config.map((item) => item.key)
 
       const payload = {}
-      keys.forEach(key => {
-        const currentConfig = config.find(i => i.key === key)
+      keys.forEach((key) => {
+        const currentConfig = config.find((i) => i.key === key)
         if (currentConfig.type === 'number') {
           payload[key] = Number.parseFloat(this.data.formData[key])
         } else {
@@ -189,7 +219,7 @@ Page({
           auditStatus: null,
           formKey: this.__formData.formKey,
           id: this.__formData.id,
-        }
+        },
       })
       wx.hideLoading()
       wx.showToast({
@@ -197,10 +227,10 @@ Page({
         icon: 'success',
         success: () => {
           // 提交成功后延迟返回上一页
-          const pages = getCurrentPages();
+          const pages = getCurrentPages()
           if (pages.length > 1) {
             // 通知上2页需要刷新
-            pages[pages.length - 3].setData({ refreshWhenShow: true });
+            pages[pages.length - 3].setData({ refreshWhenShow: true })
           }
           setTimeout(() => wx.navigateBack({ delta: 2 }), 1500)
         },

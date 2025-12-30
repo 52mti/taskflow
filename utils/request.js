@@ -1,3 +1,4 @@
+import config from '../config'
 /**
  * 封装微信小程序 request 请求
  */
@@ -34,10 +35,9 @@ const handleLoginExpired = () => {
  */
 const request = (options) => {
   // 1. 拼接 URL (自动处理基础路径)
-  const baseUrl = 'https://admin.sh-zktx.com/apit'
   const finalUrl = options.url.startsWith('http')
     ? options.url
-    : baseUrl + options.url
+    : config.baseUrl + options.url
 
   // 2. 获取鉴权信息
   const token = wx.getStorageSync('token')

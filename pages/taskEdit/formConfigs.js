@@ -181,7 +181,7 @@ export const configs = {
               value: '是否专项材料',
               valueType: 'string',
             },
-            { key: '', value: '操作', useSlot: true }
+            { key: '', value: '操作', useSlot: true },
           ],
           formSchema: [
             {
@@ -190,6 +190,14 @@ export const configs = {
               label: '物料名称',
               key: 'materialId',
               apiType: 'material',
+              onPickerConfirm: (row, formModel) => {
+                if (formModel) {
+                  formModel.specification = row.specification
+                  formModel.unit = row.unit
+                  formModel.materialName = row.label
+                  formModel.price = row.price
+                }
+              },
             },
             {
               placeholder: '选择物料名称后带出',
@@ -227,6 +235,11 @@ export const configs = {
               key: 'supplierId',
               columns: [],
               apiType: 'supplier',
+              onPickerConfirm: (row, formModel) => {
+                if (formModel) {
+                  formModel.supplierName = row.label
+                }
+              },
             },
             {
               title: '是否专项材料',

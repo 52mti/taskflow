@@ -1,6 +1,11 @@
 <view class="page-wrapper">
+  <van-nav-bar
+    title="标题"
+    left-arrow
+    bind:click-left="onCancel"
+  />
   <scroll-view scroll-y class="content-scroll">
-    <form-edit form-items="{{formItems}}" form-data="{{formData}}"></form-edit>
+    <form-edit form-items="{{formItems}}" form-data="{{formData}}" bind:changeFormItems="updateFormItems" picker-map="{{pickerMap}}"></form-edit>
   </scroll-view>
 
   <van-goods-action>

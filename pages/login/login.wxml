@@ -1,7 +1,7 @@
 <view class="container">
     <view class="logo-area">
-        <van-icon color="#1989fa" name="points" size="80px"></van-icon>
-        <view class="title">企业任务助手</view>
+        <image class="logo"src="/images/logo.png" />
+        <view class="title">兆康通信</view>
     </view>
     <view class="form-area">
         <van-cell-group>

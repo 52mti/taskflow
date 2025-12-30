@@ -1,0 +1,92 @@
+.upload-btn {
+  min-width: max-content;
+  margin-left: 20rpx;
+}
+.add-btn {
+  margin-left: 20rpx;
+}
+.file-item {
+  display: flex;
+  color: white;
+  background-color: #1989fa;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8rpx;
+  padding: 3rpx 6rpx;
+  padding-left: 14rpx;
+}
+
+.file-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.file-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-bottom: 10rpx;
+}
+
+.van-cell__value {
+  text-align: left !important;
+}
+
+.van-cell__title {
+  max-width: 6.2em;
+  min-width: 6.2em;
+  margin-right: 12px;
+}
+
+.van-goods-action {
+  padding: 10rpx;
+  position: static !important;
+  background-color: transparent;
+}
+
+.van-goods-action--safe {
+  padding-bottom: 0 !important;
+}
+
+/* pages/task-edit/index.wxss */
+page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f7f8fa; /* Vant 标准背景色 */
+}
+
+.page-wrapper {
+  background: #f7f8fa;
+  box-sizing: border-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 滚动区域自动撑开 */
+.content-scroll {
+  flex: 1;
+  overflow-y: hidden; /* 由 scroll-view 处理内部滚动 */
+}
+
+/* 内部间距调整 */
+.safe-area-inset {
+  height: 40rpx;
+}
+
+.submit-btn {
+  height: 88rpx !important;
+  font-weight: bold !important;
+}
+
+/* 针对 van-cell-group 的标题颜色优化 */
+.van-cell-group__title {
+  padding: 32rpx 32rpx 16rpx !important;
+  color: #323233 !important;
+  font-size: 28rpx !important;
+  font-weight: bold !important;
+}

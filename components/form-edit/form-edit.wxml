@@ -44,14 +44,18 @@
     </van-cell>
 
     <view wx:if="{{item.type === 'tableForm'}}">
-      <van-tabs wx:if="{{item.tabList.length >= 2}}" active="{{ active }}" bind:change="onTabChange">
-        <van-tab title="标签 1">内容 1</van-tab>
-        <van-tab title="标签 2">内容 2</van-tab>
-        <van-tab title="标签 3">内容 3</van-tab>
-        <van-tab title="标签 4">内容 4</van-tab>
+      <van-tabs wx:if="{{item.tabList.length >= 2}}" active="{{ activeTab }}" bind:change="onTabChange">
+        <van-tab wx:for="{{item.tabList}}" wx:for-item="tab" title="标签 1">
+          <custom-table tableBodyList="{{formData[tab.key]}}" tableHeadList="{{tab.headerList}}">
+            <view slot="action">
+              <van-button size="mini" type="info" bindtap="onEdit">修改</van-button>
+              <van-button size="mini" type="danger" bindtap="onDelete">删除</van-button>
+            </view>
+          </custom-table>
+        </van-tab>
       </van-tabs>
       <block wx:else>
-        <van-button type="info" bind:click="handleAddForm">添加{{item.label}}</van-button>
+        <van-button class="add-btn" type="info" bind:click="handleAddForm">添加{{item.label}}</van-button>
         <custom-table tableBodyList="{{formData[item.tabList[0].key]}}" tableHeadList="{{item.tabList[0].headerList}}">
           <view slot="action">
             <van-button size="mini" type="info" bindtap="onEdit">修改</van-button>
@@ -59,8 +63,14 @@
           </view>
         </custom-table>
       </block>
+      <!-- 修改弹窗 -->
       <van-popup show="{{ showPopup }}" custom-style="width: 100%; height: 100%;" position="right" bind:close="onPopupClose">
-        <form-edit form-items="{{item.tabList[active].formSchema}}" form-data="{{formData[item.tabList[active].key]}}"></form-edit>
+        <van-nav-bar
+          title="标题"
+          left-arrow
+          bind:click-left="onPopupClose"
+        />
+        <form-edit form-items="{{item.tabList[activeTab].formSchema}}" form-data="{{formData[item.tabList[activeTab].key][activeTab]}}" data-index="{{activeTab}}" data-key="{{item.tabList[activeTab].key}}" bind:childEvent="handleChildEvent"></form-edit>
       </van-popup>
     </view>
   </block>

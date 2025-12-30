@@ -1,10 +1,4 @@
-import { PaymentOrderBusinessType } from '../../utils/const'
-import {
-  findChildrenByCode,
-  getCustomer,
-  getMaterial,
-  getSupplier,
-} from '../../utils/https'
+import config from "../../config"
 
 Component({
   properties: {
@@ -20,6 +14,11 @@ Component({
       value: {},
     },
 
+    pickerMap: {
+      type: Object,
+      value: {}
+    },
+
     // 商业类型
     businessType: {
       type: String,
@@ -31,102 +30,32 @@ Component({
       value: '',
     },
   },
+
   data: {
     // picker数据
     showPicker: false,
     currentColumns: [],
     currentPickerKey: '', // 记录当前点击的是哪个字段
-    pickerMap: {},
 
     // calendar数据
     currentCalendarKey: '',
     showCalendar: false,
 
+    activeTab: 0,
+
     // popup数据
     showPopup: false,
   },
 
-  attached() {
-    this.initDynamicColumns()
-  },
-
   methods: {
-    async initDynamicColumns() {
-      const { formItems } = this.properties
-
-      // 找出所有需要动态获取数据的配置项
-      const updatedItems = await Promise.all(
-        formItems.map(async (item) => {
-          if (item.type === 'dynamicPicker' && item.apiType) {
-            try {
-              const data = await this.fetchDataByApi(item.apiType, item.apiKey)
-              const pickerMap = data.reduce((result, current) => {
-                return { ...result, [current.key]: current.value }
-              }, {})
-              this.setData({
-                pickerMap: { ...this.data.pickerMap, ...pickerMap },
-              })
-              return { ...item, columns: data } // 将接口返回的数据注入配置
-            } catch (err) {
-              console.error(`加载 ${item.label} 选项失败`, err)
-            }
-          }
-          return item
-        })
-      )
-
-      this.triggerEvent('changeFormItems', updatedItems)
-    },
-
-    // 模拟接口分发器
-    async fetchDataByApi(apiType, apiKey) {
-      if (apiType === 'dictionary') {
-        const res = await findChildrenByCode(apiKey)
-        const options = res.data
-
-        if (apiKey === 'PAYMENT_TYPE') {
-          return options
-            .filter((item) => {
-              return {
-                [PaymentOrderBusinessType.BIDDING]: [
-                  '601332103946174464',
-                  '600090772762525696',
-                  '601332632537530368',
-                  '598675867320713216',
-                ],
-                [PaymentOrderBusinessType.PROJECT]: ['600090772762525696'],
-                [PaymentOrderBusinessType.ORDER]: ['600090880992346112'],
-                [PaymentOrderBusinessType.CUSTOMER]: ['600090772762525696'],
-                [PaymentOrderBusinessType.EXPENSE]: ['610560086649077760'],
-              }[this.data.businessType]?.includes(item.id)
-            })
-            .map((option) => ({ key: option.id, value: option.value }))
-        }
-      }
-
-      if (apiType === 'customer') {
-        const res = await getCustomer()
-        const options = res.data?.list || []
-        return options.map((option) => ({ key: option.id, value: option.name }))
-      }
-      if (apiType === 'material') {
-        const res = await getMaterial()
-        const options = res.data?.list || []
-        return options.map((option) => ({ key: option.id, value: option.name }))
-      }
-      if (apiType === 'supplier') {
-        const res = await getSupplier()
-        const options = res.data?.list || []
-        return options.map((option) => ({ key: option.id, value: option.name }))
-      }
-      // 其他接口...
-      return []
-    },
-
     handleAddForm() {
       this.setData({
-        show
+        showPopup: true,
       })
+    },
+
+    onPopupClose() {
+      this.setData({ showPopup: false })
     },
 
     // 处理输入框变化
@@ -139,6 +68,24 @@ Component({
       })
     },
 
+    updateFormItems(e) {
+      const { index: activeTab, key } = e.currentTarget.dataset
+      const formItems = e.detail
+      this.triggerEvent('childEvent', {
+        ...this.properties.formData,
+        [key]: this.properties[index].map((item, index) => {
+          if (index === activeTab) {
+            return formItems
+          }
+          return item
+        }),
+      })
+    },
+
+    handleChildEvent(e) {
+      this.triggerEvent('changeFormItems', e.detail)
+    },
+
     // 展示选择器
     showPicker(e) {
       const { key } = e.currentTarget.dataset
@@ -147,7 +94,6 @@ Component({
       // 检查数据是否已加载
       if (!item.columns || item.columns.length === 0) {
         wx.showToast({ title: '选项加载中...', icon: 'none' })
-        this.initDynamicColumns()
         return
       }
 
@@ -240,8 +186,9 @@ Component({
       const token = wx.getStorageSync('token')
       const tokenName = wx.getStorageSync('tokenName')
       wx.showLoading({ title: '上传中...' })
+
       wx.uploadFile({
-        url: 'https://admin.sh-zktx.com/apit/general/file/upload', // 你的上传接口
+        url: `${config.baseUrl}/general/file/upload`, // 你的上传接口
         filePath: file.path,
         name: 'file',
         header: { [tokenName]: token },
