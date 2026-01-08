@@ -18,7 +18,7 @@
             <van-card class="my-card">
                 <view class="title-wrapper" slot="title">
                     <text class="card-title">{{item.name}}</text>
-                    <van-tag customClass="right-top-tag" size="medium" type="{{item.state===0?'warning':'success'}}">{{item.stateName}}</van-tag>
+                    <van-tag customClass="right-top-tag" size="medium" type="{{item.state===0?'danger':'success'}}">{{item.stateName}}</van-tag>
                 </view>
                 <view class="card-content" slot="bottom">
                     <text>发起人：{{item.initiatorName}}</text>
