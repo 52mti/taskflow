@@ -36,5 +36,6 @@
     "navigationBarTitleText": "审批助手",
     "navigationBarTextStyle": "black"
   },
+  "lazyCodeLoading": "requiredComponents",
   "plugins": {}
 }
