@@ -1,6 +1,6 @@
 <view class="container">
     <view class="logo-area">
-        <image class="logo"src="/images/logo.png" />
+        <image class="logo"src="/images/logo.jpg" />
         <view class="title">兆康通信</view>
     </view>
     <view class="form-area">
