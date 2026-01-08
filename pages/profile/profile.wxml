@@ -6,13 +6,7 @@
             <view class="role">角色：{{userInfo.role}}</view>
         </view>
     </view>
-    <view class="menu-group">
-        <van-cell-group>
-            <van-cell isLink icon="lock" title="修改密码"></van-cell>
-            <van-cell isLink icon="info-o" title="关于我们"></van-cell>
-            <van-cell isLink icon="setting-o" title="系统设置"></van-cell>
-        </van-cell-group>
-    </view>
+
     <view class="logout-btn">
         <van-button block round bind:click="handleLogout" type="danger">退出登录</van-button>
     </view>
