@@ -131,7 +131,7 @@ Page({
       
       const timeline = res.data.map(item => ({
         text: item.name,
-        desc: `${item.updated}\n执行人: ${item.executorName}`
+        desc: `${item.updated}\n${item.executorName}`
       }));
 
       // 如果最后一个节点有完成时间，增加“已完成”标记
