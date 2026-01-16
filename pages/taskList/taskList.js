@@ -29,7 +29,7 @@ Page({
       this.getTabBar().setData({ selected: 0 })
     }
 
-    wx.setNavigationBarTitle({ title: '任务 list' })
+    wx.setNavigationBarTitle({ title: '任务列表' })
 
     // 检查是否需要刷新（通常由详情页操作后触发）
     if (this.data.refreshWhenShow) {
