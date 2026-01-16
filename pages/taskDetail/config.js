@@ -1,4 +1,4 @@
-const showFlowActionBtn = (record) => {
+const showReapplyBtn = (record) => {
   const userInfo = wx.getStorageSync('userInfo') || {}
   const currentUserId = userInfo.id || ''
   // 仅当状态为0(待审批)、是初始表单、且当前操作人为自己时可见
@@ -6,6 +6,18 @@ const showFlowActionBtn = (record) => {
     record.processInstanceId &&
     record.state === 0 &&
     record.firstFormKey === record.formKey &&
+    [record.executor]?.includes(currentUserId)
+  )
+}
+
+const showAuditBtn = (record) => {
+  const userInfo = wx.getStorageSync('userInfo') || {}
+  const currentUserId = userInfo.id || ''
+  // 仅当状态为0(待审批)、是初始表单、且当前操作人为自己时可见
+  return (
+    record.processInstanceId &&
+    record.state === 0 &&
+    record.firstFormKey !== record.formKey &&
     [record.executor]?.includes(currentUserId)
   )
 }
@@ -108,7 +120,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_SUPPLIER' },
         type: 'default',
         plain: true,
-        isVisible: showFlowActionBtn,
+        isVisible: showReapplyBtn,
       },
       {
         text: '流程',
@@ -124,7 +136,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/user/supplier/audit' },
         type: 'danger',
         plain: false,
-        isVisible: showFlowActionBtn,
+        isVisible: showAuditBtn,
       },
       {
         text: '通过',
@@ -132,7 +144,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/user/supplier/audit' },
         type: 'primary',
         plain: false,
-        isVisible: showFlowActionBtn,
+        isVisible: showAuditBtn,
       },
     ],
   },
@@ -237,7 +249,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_CONSTRUCTION_TEAM' },
         type: 'default',
         plain: true,
-        isVisible: showFlowActionBtn,
+        isVisible: showReapplyBtn,
       },
       {
         text: '流程',
@@ -253,7 +265,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/user/constructionTeam/audit' },
         type: 'danger',
         plain: false,
-        isVisible: showFlowActionBtn,
+        isVisible: showAuditBtn,
       },
       {
         text: '通过',
@@ -261,7 +273,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/user/constructionTeam/audit' },
         type: 'primary',
         plain: false,
-        isVisible: showFlowActionBtn,
+        isVisible: showAuditBtn,
       },
     ],
   },
@@ -396,7 +408,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_DISTRIBUTION_PROJECT' },
         type: 'default',
         plain: true,
-        isVisible: showFlowActionBtn,
+        isVisible: showReapplyBtn,
       },
       {
         text: '流程',
@@ -412,7 +424,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/frameworkProject/audit' },
         type: 'danger',
         plain: false,
-        isVisible: showFlowActionBtn,
+        isVisible: showAuditBtn,
       },
       {
         text: '通过',
@@ -420,7 +432,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/frameworkProject/audit' },
         type: 'primary',
         plain: false,
-        isVisible: showFlowActionBtn,
+        isVisible: showAuditBtn,
       },
     ],
   },
@@ -521,7 +533,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_PROJECT_CO_OPERATION' },
         type: 'default',
         plain: true,
-        isVisible: showFlowActionBtn,
+        isVisible: showReapplyBtn,
       },
       {
         text: '流程',
@@ -537,7 +549,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/constructionTeamCooperate/audit' },
         type: 'danger',
         plain: false,
-        isVisible: showFlowActionBtn,
+        isVisible: showAuditBtn,
       },
       {
         text: '通过',
@@ -545,7 +557,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/constructionTeamCooperate/audit' },
         type: 'primary',
         plain: false,
-        isVisible: showFlowActionBtn,
+        isVisible: showAuditBtn,
       },
     ],
   },
@@ -579,7 +591,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_AUDIT_FEE' },
         type: 'default',
         plain: true,
-        isVisible: showFlowActionBtn,
+        isVisible: showReapplyBtn,
       },
       {
         text: '流程',
@@ -596,7 +608,7 @@ const CONFIG_MAP = {
         type: 'danger',
         plain: false,
         isVisible: (data) =>
-          showFlowActionBtn(data) &&
+          showAuditBtn(data) &&
           [
             'form_audit_fee_cwb_audit', // 财务部审核环节
             'form_audit_fee_zjl_audit', // 总经理审核环节
@@ -610,7 +622,7 @@ const CONFIG_MAP = {
         type: 'primary',
         plain: false,
         isVisible: (data) =>
-          showFlowActionBtn(data) &&
+          showAuditBtn(data) &&
           [
             'form_audit_fee_cwb_audit',
             'form_audit_fee_zjl_audit',
@@ -718,7 +730,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_PURCHASE_ORDER' },
         type: 'default',
         plain: true,
-        isVisible: showFlowActionBtn,
+        isVisible: showReapplyBtn,
       },
       {
         text: '流程',
@@ -735,7 +747,7 @@ const CONFIG_MAP = {
         type: 'danger',
         plain: false,
         isVisible: (data) =>
-          showFlowActionBtn(data) &&
+          showAuditBtn(data) &&
           [
             'form_purchase_order_dsz_audit', // 董事长
             'form_purchase_order_tkb_audit', // 调控部
@@ -749,7 +761,7 @@ const CONFIG_MAP = {
         type: 'primary',
         plain: false,
         isVisible: (data) =>
-          showFlowActionBtn(data) &&
+          showAuditBtn(data) &&
           [
             'form_purchase_order_dsz_audit',
             'form_purchase_order_tkb_audit',
@@ -842,7 +854,7 @@ const CONFIG_MAP = {
         },
         type: 'default',
         plain: true,
-        isVisible: showFlowActionBtn,
+        isVisible: showReapplyBtn,
       },
       {
         text: '流程',
@@ -859,7 +871,7 @@ const CONFIG_MAP = {
         type: 'danger',
         plain: false,
         isVisible: (data) =>
-          showFlowActionBtn(data) &&
+          showAuditBtn(data) &&
           [
             'form_payment_order_zlb_audit', // 总办审核
             'form_payment_order_zdb_audit', // 总部审核
@@ -875,7 +887,7 @@ const CONFIG_MAP = {
         type: 'primary',
         plain: false,
         isVisible: (data) =>
-          showFlowActionBtn(data) &&
+          showAuditBtn(data) &&
           [
             'form_payment_order_zlb_audit',
             'form_payment_order_zdb_audit',
@@ -978,7 +990,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_INVOICE' },
         type: 'default',
         plain: true,
-        isVisible: showFlowActionBtn,
+        isVisible: showReapplyBtn,
       },
       {
         text: '流程',
@@ -994,7 +1006,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/invoice/audit' },
         type: 'danger',
         isVisible: function (data) {
-          return showFlowActionBtn(data) && 'form_invoice_cwb_audit' === data.formKey
+          return showAuditBtn(data) && 'form_invoice_cwb_audit' === data.formKey
         },
       },
       {
@@ -1003,7 +1015,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/invoice/audit' },
         type: 'primary',
         isVisible: function (data) {
-          return showFlowActionBtn(data) && 'form_invoice_cwb_audit' === data.formKey
+          return showAuditBtn(data) && 'form_invoice_cwb_audit' === data.formKey
         },
       },
       {
@@ -1071,7 +1083,7 @@ const CONFIG_MAP = {
         },
         plain: true,
         type: 'default',
-        isVisible: showFlowActionBtn,
+        isVisible: showReapplyBtn,
       },
       {
         text: '流程',
@@ -1087,7 +1099,7 @@ const CONFIG_MAP = {
         type: 'danger',
         isVisible: function (data) {
           return (
-            showFlowActionBtn(data) &&
+            showAuditBtn(data) &&
             [
               'form_deposit_cwb_audit',
               'form_deposit_zjl_audit',
@@ -1103,7 +1115,7 @@ const CONFIG_MAP = {
         type: 'primary',
         isVisible: function (data) {
           return (
-            showFlowActionBtn(data) &&
+            showAuditBtn(data) &&
             [
               'form_deposit_cwb_audit',
               'form_deposit_zjl_audit',
@@ -1203,7 +1215,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_PAYMENT_ORDER' },
         plain: true,
         type: 'default',
-        isVisible: showFlowActionBtn,
+        isVisible: showReapplyBtn,
       },
       {
         text: '流程',
@@ -1219,7 +1231,7 @@ const CONFIG_MAP = {
         type: 'danger',
         isVisible: function (data) {
           return (
-            showFlowActionBtn(data) &&
+            showAuditBtn(data) &&
             [
               'form_settlement_tkb_audit',
               'form_settlement_cwb_audit',
@@ -1235,7 +1247,7 @@ const CONFIG_MAP = {
         type: 'primary',
         isVisible: function (data) {
           return (
-            showFlowActionBtn(data) &&
+            showAuditBtn(data) &&
             [
               'form_settlement_tkb_audit',
               'form_settlement_cwb_audit',
@@ -1331,7 +1343,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_COMPLETION' },
         type: 'default',
         plain: true,
-        isVisible: showFlowActionBtn,
+        isVisible: showReapplyBtn,
       },
       {
         text: '流程',
@@ -1348,7 +1360,7 @@ const CONFIG_MAP = {
         type: 'danger',
         plain: false,
         isVisible: (data) =>
-          showFlowActionBtn(data) &&
+          showAuditBtn(data) &&
           [
             'form_data_xmb_audit', // 项目部审核
             'form_data_zlb_audit', // 总办/质量部审核
@@ -1361,7 +1373,7 @@ const CONFIG_MAP = {
         type: 'primary',
         plain: false,
         isVisible: (data) =>
-          showFlowActionBtn(data) &&
+          showAuditBtn(data) &&
           ['form_data_xmb_audit', 'form_data_zlb_audit'].includes(data.formKey),
       },
       {
