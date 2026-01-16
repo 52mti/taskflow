@@ -1,3 +1,19 @@
+const showFlowActionBtn = (record) => {
+  const userInfo = wx.getStorageSync('userInfo') || {}
+  const currentUserId = userInfo.id || ''
+  // 仅当状态为0(待审批)、是初始表单、且当前操作人为自己时可见
+  return (
+    record.processInstanceId &&
+    record.state === 0 &&
+    record.firstFormKey === record.formKey &&
+    [record.executor]?.includes(currentUserId)
+  )
+}
+
+const showWorkflowBtn = (record) => {
+  return Boolean(record.processInstanceId)
+}
+
 /**
  * --- 格式化工具函数 ---
  */
@@ -92,16 +108,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_SUPPLIER' },
         type: 'default',
         plain: true,
-        isVisible: function (data) {
-          const userInfo = wx.getStorageSync('userInfo') || {}
-          const currentUserId = userInfo.id || ''
-          // 逻辑：状态为0 且 是第一个表单 且 当前执行人是自己
-          return (
-            data.state === 0 &&
-            data.firstFormKey === data.formKey &&
-            [data.executor].includes(currentUserId)
-          )
-        },
+        isVisible: showFlowActionBtn,
       },
       {
         text: '流程',
@@ -109,7 +116,7 @@ const CONFIG_MAP = {
         actionPayload: {},
         type: 'default',
         plain: true,
-        isVisible: () => true,
+        isVisible: showWorkflowBtn,
       },
       {
         text: '驳回',
@@ -117,7 +124,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/user/supplier/audit' },
         type: 'danger',
         plain: false,
-        isVisible: () => true,
+        isVisible: showFlowActionBtn,
       },
       {
         text: '通过',
@@ -125,7 +132,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/user/supplier/audit' },
         type: 'primary',
         plain: false,
-        isVisible: () => true,
+        isVisible: showFlowActionBtn,
       },
     ],
   },
@@ -230,15 +237,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_CONSTRUCTION_TEAM' },
         type: 'default',
         plain: true,
-        isVisible: function (data) {
-          const userInfo = wx.getStorageSync('userInfo') || {}
-          const currentUserId = userInfo.id || ''
-          return (
-            data.state === 0 &&
-            data.firstFormKey === data.formKey &&
-            [data.executor].includes(currentUserId)
-          )
-        },
+        isVisible: showFlowActionBtn,
       },
       {
         text: '流程',
@@ -246,7 +245,7 @@ const CONFIG_MAP = {
         actionPayload: {},
         type: 'default',
         plain: true,
-        isVisible: () => true,
+        isVisible: showWorkflowBtn,
       },
       {
         text: '驳回',
@@ -254,7 +253,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/user/constructionTeam/audit' },
         type: 'danger',
         plain: false,
-        isVisible: () => true,
+        isVisible: showFlowActionBtn,
       },
       {
         text: '通过',
@@ -262,7 +261,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/user/constructionTeam/audit' },
         type: 'primary',
         plain: false,
-        isVisible: () => true,
+        isVisible: showFlowActionBtn,
       },
     ],
   },
@@ -397,16 +396,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_DISTRIBUTION_PROJECT' },
         type: 'default',
         plain: true,
-        isVisible: function (data) {
-          const userInfo = wx.getStorageSync('userInfo') || {}
-          const currentUserId = userInfo.id || ''
-          // 仅当状态为0(草稿)、是初始表单、且当前操作人为自己时可见
-          return (
-            data.state === 0 &&
-            data.firstFormKey === data.formKey &&
-            [data.executor].includes(currentUserId)
-          )
-        },
+        isVisible: showFlowActionBtn,
       },
       {
         text: '流程',
@@ -414,7 +404,7 @@ const CONFIG_MAP = {
         actionPayload: {},
         type: 'default',
         plain: true,
-        isVisible: () => true,
+        isVisible: showWorkflowBtn,
       },
       {
         text: '驳回',
@@ -422,7 +412,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/frameworkProject/audit' },
         type: 'danger',
         plain: false,
-        isVisible: () => true,
+        isVisible: showFlowActionBtn,
       },
       {
         text: '通过',
@@ -430,7 +420,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/frameworkProject/audit' },
         type: 'primary',
         plain: false,
-        isVisible: () => true,
+        isVisible: showFlowActionBtn,
       },
     ],
   },
@@ -531,16 +521,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_PROJECT_CO_OPERATION' },
         type: 'default',
         plain: true,
-        isVisible: function (data) {
-          const userInfo = wx.getStorageSync('userInfo') || {}
-          const currentUserId = userInfo.id || ''
-          // 逻辑：状态为待办(0) 且 是首个环节 且 当前人为执行人
-          return (
-            data.state === 0 &&
-            data.firstFormKey === data.formKey &&
-            [data.executor].includes(currentUserId)
-          )
-        },
+        isVisible: showFlowActionBtn,
       },
       {
         text: '流程',
@@ -548,7 +529,7 @@ const CONFIG_MAP = {
         actionPayload: {},
         type: 'default',
         plain: true,
-        isVisible: () => true,
+        isVisible: showWorkflowBtn,
       },
       {
         text: '驳回',
@@ -556,7 +537,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/constructionTeamCooperate/audit' },
         type: 'danger',
         plain: false,
-        isVisible: () => true,
+        isVisible: showFlowActionBtn,
       },
       {
         text: '通过',
@@ -564,7 +545,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/constructionTeamCooperate/audit' },
         type: 'primary',
         plain: false,
-        isVisible: () => true,
+        isVisible: showFlowActionBtn,
       },
     ],
   },
@@ -598,15 +579,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_AUDIT_FEE' },
         type: 'default',
         plain: true,
-        isVisible: function (data) {
-          const userInfo = wx.getStorageSync('userInfo') || {}
-          const currentUserId = userInfo.id || ''
-          return (
-            data.state === 0 &&
-            data.firstFormKey === data.formKey &&
-            [data.executor].includes(currentUserId)
-          )
-        },
+        isVisible: showFlowActionBtn,
       },
       {
         text: '流程',
@@ -614,7 +587,7 @@ const CONFIG_MAP = {
         actionPayload: {},
         type: 'default',
         plain: true,
-        isVisible: () => true,
+        isVisible: showWorkflowBtn,
       },
       {
         text: '驳回',
@@ -623,6 +596,7 @@ const CONFIG_MAP = {
         type: 'danger',
         plain: false,
         isVisible: (data) =>
+          showFlowActionBtn(data) &&
           [
             'form_audit_fee_cwb_audit', // 财务部审核环节
             'form_audit_fee_zjl_audit', // 总经理审核环节
@@ -636,6 +610,7 @@ const CONFIG_MAP = {
         type: 'primary',
         plain: false,
         isVisible: (data) =>
+          showFlowActionBtn(data) &&
           [
             'form_audit_fee_cwb_audit',
             'form_audit_fee_zjl_audit',
@@ -743,15 +718,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_PURCHASE_ORDER' },
         type: 'default',
         plain: true,
-        isVisible: function (data) {
-          const userInfo = wx.getStorageSync('userInfo') || {}
-          const currentUserId = userInfo.id || ''
-          return (
-            data.state === 0 &&
-            data.firstFormKey === data.formKey &&
-            [data.executor].includes(currentUserId)
-          )
-        },
+        isVisible: showFlowActionBtn,
       },
       {
         text: '流程',
@@ -759,7 +726,7 @@ const CONFIG_MAP = {
         actionPayload: {},
         type: 'default',
         plain: true,
-        isVisible: () => true,
+        isVisible: showWorkflowBtn,
       },
       {
         text: '驳回',
@@ -768,6 +735,7 @@ const CONFIG_MAP = {
         type: 'danger',
         plain: false,
         isVisible: (data) =>
+          showFlowActionBtn(data) &&
           [
             'form_purchase_order_dsz_audit', // 董事长
             'form_purchase_order_tkb_audit', // 调控部
@@ -781,6 +749,7 @@ const CONFIG_MAP = {
         type: 'primary',
         plain: false,
         isVisible: (data) =>
+          showFlowActionBtn(data) &&
           [
             'form_purchase_order_dsz_audit',
             'form_purchase_order_tkb_audit',
@@ -873,15 +842,7 @@ const CONFIG_MAP = {
         },
         type: 'default',
         plain: true,
-        isVisible: function (data) {
-          const userInfo = wx.getStorageSync('userInfo') || {}
-          const currentUserId = userInfo.id || ''
-          return (
-            data.state === 0 &&
-            data.firstFormKey === data.formKey &&
-            [data.executor].includes(currentUserId)
-          )
-        },
+        isVisible: showFlowActionBtn,
       },
       {
         text: '流程',
@@ -889,7 +850,7 @@ const CONFIG_MAP = {
         actionPayload: {},
         type: 'default',
         plain: true,
-        isVisible: () => true,
+        isVisible: showWorkflowBtn,
       },
       {
         text: '驳回',
@@ -898,6 +859,7 @@ const CONFIG_MAP = {
         type: 'danger',
         plain: false,
         isVisible: (data) =>
+          showFlowActionBtn(data) &&
           [
             'form_payment_order_zlb_audit', // 总办审核
             'form_payment_order_zdb_audit', // 总部审核
@@ -913,6 +875,7 @@ const CONFIG_MAP = {
         type: 'primary',
         plain: false,
         isVisible: (data) =>
+          showFlowActionBtn(data) &&
           [
             'form_payment_order_zlb_audit',
             'form_payment_order_zdb_audit',
@@ -1015,15 +978,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_INVOICE' },
         type: 'default',
         plain: true,
-        isVisible: function (data) {
-          var user = wx.getStorageSync('userInfo')
-          var userId = (user ? user.id : '') || ''
-          return (
-            0 === data.state &&
-            data.firstFormKey === data.formKey &&
-            [data.executor].includes(userId)
-          )
-        },
+        isVisible: showFlowActionBtn,
       },
       {
         text: '流程',
@@ -1031,9 +986,7 @@ const CONFIG_MAP = {
         actionPayload: {},
         type: 'default',
         plain: true,
-        isVisible: function () {
-          return true
-        },
+        isVisible: showWorkflowBtn,
       },
       {
         text: '驳回',
@@ -1041,7 +994,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/invoice/audit' },
         type: 'danger',
         isVisible: function (data) {
-          return 'form_invoice_cwb_audit' === data.formKey
+          return showFlowActionBtn(data) && 'form_invoice_cwb_audit' === data.formKey
         },
       },
       {
@@ -1050,7 +1003,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/invoice/audit' },
         type: 'primary',
         isVisible: function (data) {
-          return 'form_invoice_cwb_audit' === data.formKey
+          return showFlowActionBtn(data) && 'form_invoice_cwb_audit' === data.formKey
         },
       },
       {
@@ -1118,24 +1071,14 @@ const CONFIG_MAP = {
         },
         plain: true,
         type: 'default',
-        isVisible: function (data) {
-          var user = wx.getStorageSync('userInfo')
-          var userId = (user ? user.id : '') || ''
-          return (
-            0 === data.state &&
-            data.firstFormKey === data.formKey &&
-            [data.executor].includes(userId)
-          )
-        },
+        isVisible: showFlowActionBtn,
       },
       {
         text: '流程',
         plain: true,
         type: 'default',
         action: 'showWorkflow',
-        isVisible: function () {
-          return true
-        },
+        isVisible: showWorkflowBtn,
       },
       {
         text: '驳回',
@@ -1143,11 +1086,14 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/deposit/audit' },
         type: 'danger',
         isVisible: function (data) {
-          return [
-            'form_deposit_cwb_audit',
-            'form_deposit_zjl_audit',
-            'form_deposit_dsz_audit',
-          ].includes(data.formKey)
+          return (
+            showFlowActionBtn(data) &&
+            [
+              'form_deposit_cwb_audit',
+              'form_deposit_zjl_audit',
+              'form_deposit_dsz_audit',
+            ].includes(data.formKey)
+          )
         },
       },
       {
@@ -1156,11 +1102,14 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/deposit/audit' },
         type: 'primary',
         isVisible: function (data) {
-          return [
-            'form_deposit_cwb_audit',
-            'form_deposit_zjl_audit',
-            'form_deposit_dsz_audit',
-          ].includes(data.formKey)
+          return (
+            showFlowActionBtn(data) &&
+            [
+              'form_deposit_cwb_audit',
+              'form_deposit_zjl_audit',
+              'form_deposit_dsz_audit',
+            ].includes(data.formKey)
+          )
         },
       },
       {
@@ -1254,24 +1203,14 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_PAYMENT_ORDER' },
         plain: true,
         type: 'default',
-        isVisible: function (data) {
-          var user = wx.getStorageSync('userInfo')
-          var userId = (user ? user.id : '') || ''
-          return (
-            0 === data.state &&
-            data.firstFormKey === data.formKey &&
-            [data.executor].includes(userId)
-          )
-        },
+        isVisible: showFlowActionBtn,
       },
       {
         text: '流程',
         action: 'showWorkflow',
         plain: true,
         type: 'default',
-        isVisible: function () {
-          return true
-        },
+        isVisible: showWorkflowBtn,
       },
       {
         text: '驳回',
@@ -1279,11 +1218,14 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/settlement/audit' },
         type: 'danger',
         isVisible: function (data) {
-          return [
-            'form_settlement_tkb_audit',
-            'form_settlement_cwb_audit',
-            'form_settlement_ld_audit',
-          ].includes(data.formKey)
+          return (
+            showFlowActionBtn(data) &&
+            [
+              'form_settlement_tkb_audit',
+              'form_settlement_cwb_audit',
+              'form_settlement_ld_audit',
+            ].includes(data.formKey)
+          )
         },
       },
       {
@@ -1292,11 +1234,14 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/settlement/audit' },
         type: 'primary',
         isVisible: function (data) {
-          return [
-            'form_settlement_tkb_audit',
-            'form_settlement_cwb_audit',
-            'form_settlement_ld_audit',
-          ].includes(data.formKey)
+          return (
+            showFlowActionBtn(data) &&
+            [
+              'form_settlement_tkb_audit',
+              'form_settlement_cwb_audit',
+              'form_settlement_ld_audit',
+            ].includes(data.formKey)
+          )
         },
       },
       {
@@ -1386,15 +1331,7 @@ const CONFIG_MAP = {
         actionPayload: { type: 'KEY_COMPLETION' },
         type: 'default',
         plain: true,
-        isVisible: function (data) {
-          const userInfo = wx.getStorageSync('userInfo') || {}
-          const currentUserId = userInfo.id || ''
-          return (
-            data.state === 0 &&
-            data.firstFormKey === data.formKey &&
-            [data.executor].includes(currentUserId)
-          )
-        },
+        isVisible: showFlowActionBtn,
       },
       {
         text: '流程',
@@ -1402,7 +1339,7 @@ const CONFIG_MAP = {
         actionPayload: {},
         type: 'default',
         plain: true,
-        isVisible: () => true,
+        isVisible: showWorkflowBtn,
       },
       {
         text: '驳回',
@@ -1411,6 +1348,7 @@ const CONFIG_MAP = {
         type: 'danger',
         plain: false,
         isVisible: (data) =>
+          showFlowActionBtn(data) &&
           [
             'form_data_xmb_audit', // 项目部审核
             'form_data_zlb_audit', // 总办/质量部审核
@@ -1423,6 +1361,7 @@ const CONFIG_MAP = {
         type: 'primary',
         plain: false,
         isVisible: (data) =>
+          showFlowActionBtn(data) &&
           ['form_data_xmb_audit', 'form_data_zlb_audit'].includes(data.formKey),
       },
       {
