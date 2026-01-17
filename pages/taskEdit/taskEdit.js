@@ -21,7 +21,8 @@ Page({
     const taskType = options.type // 从跳转参数获取任务类型
     this.__taskType = taskType
     const config = JSON.parse(JSON.stringify(configs[taskType] || [])) // 深拷贝防止污染原始配置
-    const keys = config.map((item) => item.key)
+    // 过滤掉没有 key 的配置项（如 divider）
+    const keys = config.map((item) => item.key).filter(Boolean)
 
     // 2. 解析路由传来的初始数据
     const formData = JSON.parse(decodeURIComponent(options.initialData))
@@ -48,9 +49,9 @@ Page({
     await this.initDynamicColumns()
   },
 
-  updateFormItems(e) {
-    console.log('event: changeFormData',e)
-    this.setData({ formItems: e.detail })
+  // 处理表单数据变化
+  onChangeFormData(e) {
+    this.setData({ formData: e.detail })
   },
 
   async initDynamicColumns() {
@@ -212,20 +213,28 @@ Page({
 
     try {
       const config = JSON.parse(JSON.stringify(configs[this.__taskType] || []))
-      const keys = config.map((item) => item.key)
+      // 过滤掉没有 key 的配置项（如 divider）
+      const keys = config.map((item) => item.key).filter(Boolean)
 
       const payload = {}
       keys.forEach((key) => {
         const currentConfig = config.find((i) => i.key === key)
-        if (currentConfig.type === 'number') {
-          payload[key] = Number.parseFloat(this.data.formData[key])
+        if (!currentConfig) return // 跳过找不到配置的字段
+        const value = this.data.formData[key]
+        if (currentConfig.type === 'number' && value !== undefined && value !== '') {
+          payload[key] = Number.parseFloat(value)
         } else {
-          payload[key] = this.data.formData[key]
+          payload[key] = value
         }
       })
 
+      const apiUrl = apiPathMap[this.__taskType]
+      if (!apiUrl) {
+        throw new Error(`未配置 ${this.__taskType} 的提交接口`)
+      }
+
       const response = await request({
-        url: apiPathMap[this.__taskType],
+        url: apiUrl,
         method: 'POST',
         data: {
           ...payload,
@@ -240,13 +249,10 @@ Page({
         title: response.msg,
         icon: 'success',
         success: () => {
-          // 提交成功后延迟返回上一页
-          const pages = getCurrentPages()
-          if (pages.length > 1) {
-            // 通知上2页需要刷新
-            pages[pages.length - 3].setData({ refreshWhenShow: true })
-          }
-          setTimeout(() => wx.navigateBack({ delta: 2 }), 1500)
+          // 提交成功后跳转到任务列表页面
+          setTimeout(() => {
+            wx.reLaunch({ url: '/pages/taskList/taskList' })
+          }, 1500)
         },
       })
     } catch (err) {

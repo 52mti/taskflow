@@ -68,20 +68,6 @@ Component({
       })
     },
 
-    updateFormItems(e) {
-      const { index: activeTab, key } = e.currentTarget.dataset
-      const formItems = e.detail
-      this.triggerEvent('childEvent', {
-        ...this.properties.formData,
-        [key]: this.properties[index].map((item, index) => {
-          if (index === activeTab) {
-            return formItems
-          }
-          return item
-        }),
-      })
-    },
-
     handleChildEvent(e) {
       this.triggerEvent('changeFormItems', e.detail)
     },
@@ -168,9 +154,24 @@ Component({
     // 1. 选择并上传文件
     chooseAndUpload(e) {
       const { key, config } = e.currentTarget.dataset
+      const maxCount = config.maxCount || 9 // 默认最多9个文件
+      const currentFileList = this.properties.formData[key]
+      // 计算当前已有文件数量（支持字符串和数组两种格式）
+      let currentCount = 0
+      if (typeof currentFileList === 'string' && currentFileList) {
+        currentCount = currentFileList.split(',').filter(Boolean).length
+      } else if (Array.isArray(currentFileList)) {
+        currentCount = currentFileList.length
+      }
+      const remainCount = maxCount - currentCount
+
+      if (remainCount <= 0) {
+        wx.showToast({ title: '已达到最大文件数量', icon: 'none' })
+        return
+      }
 
       wx.chooseMessageFile({
-        count: config.maxCount - (this.properties.formData[key]?.length || 0),
+        count: remainCount,
         type: config.fileType || 'all',
         success: (res) => {
           const tempFiles = res.tempFiles
@@ -203,16 +204,13 @@ Component({
           }
           const serverPath = data.data // 服务器返回的远程路径
 
-          // 更新数据层
-          const newList = this.properties.formData[key] || []
-          newList.push({
-            name: file.name,
-            path: serverPath,
-          })
+          // 更新数据层 - 使用逗号分隔的字符串格式
+          const currentValue = this.properties.formData[key] || ''
+          const newValue = currentValue ? `${currentValue},${serverPath}` : serverPath
 
           this.triggerEvent('changeFormData', {
             ...this.properties.formData,
-            [key]: newList,
+            [key]: newValue,
           })
         },
         complete: () => {
@@ -284,17 +282,21 @@ Component({
     // 3. 删除文件
     deleteFile(e) {
       const { key, index } = e.currentTarget.dataset
-      const list = this.properties.formData[key]
+      const currentValue = this.properties.formData[key]
 
       wx.showModal({
         title: '提示',
         content: '确定删除该文件吗？',
         success: (res) => {
           if (res.confirm) {
+            // 将字符串转为数组，删除指定项后再转回字符串
+            const list = currentValue ? currentValue.split(',').filter(Boolean) : []
             list.splice(index, 1)
+            const newValue = list.join(',')
+
             this.triggerEvent('changeFormData', {
               ...this.properties.formData,
-              [key]: list,
+              [key]: newValue,
             })
           }
         },

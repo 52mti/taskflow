@@ -5,7 +5,7 @@
     bind:click-left="onCancel"
   />
   <scroll-view scroll-y class="content-scroll">
-    <form-edit form-items="{{formItems}}" form-data="{{formData}}" bind:changeFormItems="updateFormItems" picker-map="{{pickerMap}}"></form-edit>
+    <form-edit form-items="{{formItems}}" form-data="{{formData}}" bind:changeFormData="onChangeFormData" picker-map="{{pickerMap}}"></form-edit>
   </scroll-view>
 
   <van-goods-action>

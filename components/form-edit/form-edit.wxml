@@ -31,7 +31,7 @@
     <van-cell wx:elif="{{item.type === 'file'}}" required="{{item.required}}" title="{{item.label}}" direction="vertical">
       <view class="file-container">
         <view class="file-list">
-          <view class="file-item" wx:for="{{utils.splitString(formData[item.key], ',')}}" wx:for-item="file" wx:key="path">
+          <view class="file-item" wx:for="{{utils.splitString(formData[item.key], ',')}}" wx:for-item="file" wx:key="index">
             <text data-path="{{file}}" bindtap="previewFile">{{utils.deriveFileName(file)}}</text>
             <van-tag closeable type="primary" size="medium" catch:close="deleteFile" data-key="{{item.key}}" data-index="{{index}}" >
             </van-tag>
@@ -95,10 +95,25 @@ var splitString = function(str, separator) {
   return str.split(separator);
 }
 var deriveFileName = (function(url) {
-  if (!url) return ('file');;
+  if (!url) return ('file');
   var parts = url.split('_');
-  var fileName = parts[((nt_0 = (parts.length - 1), null == nt_0 ? undefined : 'number' === typeof nt_0 ? nt_0 : "" + nt_0))];
-  return (fileName || 'file')
+  var fullName = parts[parts.length - 1] || 'file';
+  // 分离文件名和扩展名
+  var dotIndex = fullName.lastIndexOf('.');
+  if (dotIndex === -1) {
+    // 没有扩展名，直接截断
+    if (fullName.length > 5) {
+      return fullName.substring(0, 5) + '...';
+    }
+    return fullName;
+  }
+  var name = fullName.substring(0, dotIndex);
+  var ext = fullName.substring(dotIndex);
+  // 只对文件名部分做截断，保留扩展名
+  if (name.length > 5) {
+    return name.substring(0, 5) + '...' + ext;
+  }
+  return fullName;
 });
 module.exports = ({
   deriveFileName: deriveFileName,

@@ -354,7 +354,7 @@ export const configs = {
   ],
   // 7. 施工队审批
   KEY_CONSTRUCTION_TEAM: [],
-  // 8. 项目分包/框架项目审批
+  // 8. 分配项目/框架项目审批
   KEY_DISTRIBUTION_PROJECT: [],
   get KEY_FRAMEWORK_PROJECT() {
     return this.KEY_DISTRIBUTION_PROJECT
@@ -378,4 +378,12 @@ export const apiPathMap = {
   KEY_AUDIT_FEE: '/project/auditFee/saveAndStartUpProcess',
   KEY_INVOICE: '/project/invoice/saveAndStartUpProcess',
   KEY_DEPOSIT: '/project/deposit/saveAndStartUpProcess',
+  KEY_PURCHASE_ORDER: '/project/purchaseOrder/saveAndStartUpProcess',
+  KEY_SUPPLIER: '/project/supplier/saveAndStartUpProcess',
+  KEY_CONSTRUCTION_TEAM: '/project/constructionTeam/saveAndStartUpProcess',
+  KEY_DISTRIBUTION_PROJECT: '/project/frameworkProject/saveAndStartUpProcess',
+  KEY_FRAMEWORK_PROJECT: '/project/frameworkProject/saveAndStartUpProcess',
+  KEY_PROJECT_CO_OPERATION: '/project/constructionTeamCooperate/saveAndStartUpProcess',
+  KEY_SETTLEMENT: '/project/settlement/saveAndStartUpProcess',
+  KEY_COMPLETION: '/project/completionData/saveAndStartUpProcess',
 }
