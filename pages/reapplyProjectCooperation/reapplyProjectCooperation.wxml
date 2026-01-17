@@ -2,7 +2,7 @@
   <van-cell 
     title="施工队名称" 
     required="{{ true }}"
-    value="{{ selectedCity || '请选择' }}" 
+    value="{{ selectedTeamName || '请选择' }}" 
     is-link 
     bind:click="onOpenSinglePicker" 
   />

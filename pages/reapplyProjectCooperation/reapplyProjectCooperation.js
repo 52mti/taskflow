@@ -7,6 +7,7 @@ Page({
     loadingSingle: false,
     singleColumns: [], // 格式: [{text:'施工队名称', id: '123'}, ...]
     selectedTeamId: '', // 选中的施工队ID
+    selectedTeamName: '', // 选中的施工队名称
 
     // --- 表格 ---
     headerList: [
@@ -62,6 +63,9 @@ Page({
     // 4. 处理回显逻辑
     // 回显选中的施工队名称
     const selectedTeamId = initialData.constructionTeamId || ''
+    // 根据 selectedTeamId 从 singleColumns 中找到对应的名称进行回显
+    const selectedTeam = singleColumns.find((item) => item.id === selectedTeamId)
+    const selectedTeamName = selectedTeam?.text || ''
 
     // 回显表格选中项 - 根据已有的合作施工队ID列表
     const selectedIds = initialData.unitDetailList.map(unit => unit.id) || []
@@ -70,6 +74,7 @@ Page({
       singleColumns,
       tableBodyList,
       selectedTeamId,
+      selectedTeamName,
       selectedIds,
     })
   },
@@ -99,6 +104,7 @@ Page({
     const { value } = event.detail // value 包含 {text, id, ...}
     this.setData({
       selectedTeamId: value.id,
+      selectedTeamName: value.text,
       showSingle: false,
     })
     console.log('单选结果：', value)

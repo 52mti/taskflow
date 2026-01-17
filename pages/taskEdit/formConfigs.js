@@ -359,7 +359,7 @@ export const configs = {
   get KEY_FRAMEWORK_PROJECT() {
     return this.KEY_DISTRIBUTION_PROJECT
   },
-  // 9. 施工队合作审批
+  // 9. 施工队合作审批（额外调转页面）
   KEY_PROJECT_CO_OPERATION: [],
   // 10. 施工队结算审批模块
   KEY_SETTLEMENT: [],
