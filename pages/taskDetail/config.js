@@ -639,6 +639,7 @@ const CONFIG_MAP = {
         type: 'primary',
         plain: false,
         isVisible: (data) =>
+          showAuditBtn(data) &&
           data.formKey === 'form_audit_fee_cwb_upload_payment_voucher',
       },
       {
@@ -650,6 +651,7 @@ const CONFIG_MAP = {
         url: '/project/auditFee/process',
         field: 'invoiceFile',
         isVisible: (data) =>
+          showAuditBtn(data) &&
           data.formKey === 'form_audit_fee_zlb_upload_payment_voucher',
       },
     ],
@@ -777,7 +779,9 @@ const CONFIG_MAP = {
         },
         type: 'primary',
         plain: false,
-        isVisible: (data) => data.formKey === 'form_purchase_order_tkb_upload',
+        isVisible: (data) =>
+          showAuditBtn(data) &&
+          data.formKey === 'form_purchase_order_tkb_upload',
       },
       {
         text: '上传打款凭证',
@@ -789,6 +793,7 @@ const CONFIG_MAP = {
         type: 'primary',
         plain: false,
         isVisible: (data) =>
+          showAuditBtn(data) &&
           data.formKey === 'form_purchase_order_cwb_upload_voucher',
       },
       {
@@ -906,6 +911,7 @@ const CONFIG_MAP = {
         type: 'primary',
         plain: false,
         isVisible: (data) =>
+          showAuditBtn(data) &&
           data.formKey === 'form_payment_order_cwb_upload_payment_proof',
       },
       {
@@ -918,6 +924,7 @@ const CONFIG_MAP = {
         type: 'primary',
         plain: false,
         isVisible: (data) =>
+          showAuditBtn(data) &&
           data.formKey === 'form_payment_order_issue_voucher',
       },
       {
@@ -930,6 +937,7 @@ const CONFIG_MAP = {
         type: 'default',
         plain: true,
         isVisible: (data) =>
+          showAuditBtn(data) &&
           [
             'form_payment_order_cwb_upload_invoice',
             'form_payment_order_tkb_upload_invoice',
@@ -1024,7 +1032,7 @@ const CONFIG_MAP = {
         actionPayload: { url: '/project/invoice/process', field: 'attachment' },
         type: 'primary',
         isVisible: function (data) {
-          return 'form_invoice_cwb_upload' === data.formKey
+          return showAuditBtn(data) && 'form_invoice_cwb_upload' === data.formKey
         },
       },
     ],
@@ -1133,7 +1141,7 @@ const CONFIG_MAP = {
         },
         type: 'primary',
         isVisible: function (data) {
-          return 'form_deposit_pay' === data.formKey
+          return showAuditBtn(data) && 'form_deposit_pay' === data.formKey
         },
       },
       {
@@ -1145,7 +1153,7 @@ const CONFIG_MAP = {
         },
         type: 'primary',
         isVisible: function (data) {
-          return 'form_deposit_recycle' === data.formKey
+          return showAuditBtn(data) && 'form_deposit_recycle' === data.formKey
         },
       },
     ],
@@ -1265,7 +1273,7 @@ const CONFIG_MAP = {
         },
         type: 'primary',
         isVisible: function (data) {
-          return 'form_settlement_xmb_upload' === data.formKey
+          return showAuditBtn(data) && 'form_settlement_xmb_upload' === data.formKey
         },
       },
       {
@@ -1277,7 +1285,7 @@ const CONFIG_MAP = {
         },
         type: 'primary',
         isVisible: function (data) {
-          return 'form_settlement_cwb_upload' === data.formKey
+          return showAuditBtn(data) && 'form_settlement_cwb_upload' === data.formKey
         },
       },
     ],
@@ -1385,7 +1393,8 @@ const CONFIG_MAP = {
         },
         type: 'primary',
         plain: false,
-        isVisible: (data) => data.formKey === 'form_data_xmb_upload_audit_file',
+        isVisible: (data) =>
+          showAuditBtn(data) && data.formKey === 'form_data_xmb_upload_audit_file',
       },
       {
         text: '重新上传初始竣工资料',
@@ -1396,7 +1405,8 @@ const CONFIG_MAP = {
         },
         type: 'primary',
         plain: false,
-        isVisible: (data) => data.formKey === 'form_data_start',
+        isVisible: (data) =>
+          showAuditBtn(data) && data.formKey === 'form_data_start',
       },
       {
         text: '上传完善竣工资料',
@@ -1408,6 +1418,7 @@ const CONFIG_MAP = {
         type: 'primary',
         plain: false,
         isVisible: (data) =>
+          showAuditBtn(data) &&
           data.formKey === 'form_data_xmb_upload_approval_order',
       },
     ],
