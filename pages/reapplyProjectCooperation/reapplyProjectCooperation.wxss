@@ -1,0 +1,55 @@
+.container {
+  padding: 20px 0;
+  background-color: #f7f8fa;
+  min-height: 100vh;
+}
+
+.btn-area {
+  padding: 0 16px;
+}
+
+.result-area {
+  padding: 16px;
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}
+
+/* --- 自定义 Picker 工具栏样式 --- */
+.picker-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 44px;
+  line-height: 44px;
+  background-color: #fff;
+  border-bottom: 1px solid #ebedf0;
+}
+
+.picker-cancel {
+  padding: 0 16px;
+  color: #969799;
+  font-size: 14px;
+}
+
+.picker-confirm {
+  padding: 0 16px;
+  color: #576b95; /* 微信绿或 Vant 蓝 */
+  font-size: 14px;
+}
+
+.picker-title {
+  font-weight: 500;
+  font-size: 16px;
+  max-width: 50%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.loading-center {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-size: 14px;
+}

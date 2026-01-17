@@ -38,3 +38,14 @@ export const getSupplier = () => {
     },
   })
 }
+export const getConstructionTeam = () => {
+  return request({
+    method: 'POST',
+    url: '/user/constructionTeam',
+    data: {
+      auditStatus: 1,
+      noFlow: true,
+      pageSize: 99,
+    },
+  })
+}

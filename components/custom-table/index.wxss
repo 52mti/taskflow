@@ -46,3 +46,13 @@
     white-space: nowrap;
     width: 180rpx
 }
+
+/* 新增：Checkbox 列的样式 */
+.checkbox-column {
+  width: 80rpx;        /* 固定宽度，根据需要调整 */
+  flex-shrink: 0;      /* 防止被压缩 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid #ebedf0; /* 可选：增加分割线 */
+}

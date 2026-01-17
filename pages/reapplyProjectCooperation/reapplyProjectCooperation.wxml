@@ -1,0 +1,31 @@
+<view class="container">
+  <van-cell 
+    title="施工队名称" 
+    required="{{ true }}"
+    value="{{ selectedCity || '请选择' }}" 
+    is-link 
+    bind:click="onOpenSinglePicker" 
+  />
+
+
+  <view style="height: 20px;"></view>
+
+  <custom-table 
+    tableBodyList="{{ tableBodyList }}" 
+    tableHeadList="{{ headerList }}" 
+    selectable="{{ true }}" 
+    bind:selectionChange="onSelectionChange"
+    rowKey="id"
+  />
+
+  <van-popup show="{{ showSingle }}" position="bottom" bind:close="onCloseSinglePicker">
+    <van-picker 
+      show-toolbar 
+      title="城市选择" 
+      columns="{{ singleColumns }}" 
+      bind:cancel="onCloseSinglePicker" 
+      bind:confirm="onConfirmSingle" 
+      loading="{{ loadingSingle }}"
+    />
+  </van-popup>
+</view>

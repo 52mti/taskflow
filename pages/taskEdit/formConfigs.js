@@ -1,4 +1,5 @@
 export const configs = {
+  // 1. 用款审批
   KEY_PAYMENT_ORDER: [
     {
       label: '用款用途',
@@ -29,6 +30,7 @@ export const configs = {
       placeholder: '请输入备注',
     },
   ],
+  // 2. 审计费审批
   KEY_AUDIT_FEE: [
     {
       label: '用款类型',
@@ -59,6 +61,7 @@ export const configs = {
       placeholder: '请输入备注',
     },
   ],
+  // 3. 开票审批模块
   KEY_INVOICE: [
     {
       required: true,
@@ -116,6 +119,7 @@ export const configs = {
       key: 'currentInvoiceExcludingTaxTotal',
     },
   ],
+  // 4. 保证金审批模块
   KEY_DEPOSIT: [
     {
       type: 'number',
@@ -135,6 +139,7 @@ export const configs = {
       placeholder: '请输入备注',
     },
   ],
+  // 5. 采购单审批
   KEY_PURCHASE_ORDER: [
     {
       label: '基础信息',
@@ -263,6 +268,107 @@ export const configs = {
       ],
       label: '采购明细',
       key: 'purchaseOrderItemList',
+    },
+  ],
+  // 6. 供应商审批
+  KEY_SUPPLIER: [
+    {
+      label: '基础信息',
+      type: 'divider',
+    },
+    {
+      label: '供应商编号',
+      key: 'code',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      label: '供应商名称',
+      key: 'name',
+      type: 'text',
+      required: true,
+    },
+    {
+      label: '供应商简称',
+      key: 'shortName',
+      type: 'text',
+    },
+    {
+      label: '供应商类型',
+      key: 'typeId',
+      type: 'dynamicPicker',
+      apiType: 'dictionary',
+      apiKey: 'supplier-type',
+      columns: [],
+    },
+    {
+      label: '联系人',
+      key: 'linkman',
+      type: 'text',
+      required: true,
+    },
+    {
+      label: '联系方式',
+      key: 'linkPhone',
+      type: 'text',
+    },
+    {
+      label: '备注',
+      key: 'remarks',
+      type: 'textarea',
+    },
+    {
+      label: '收款信息',
+      type: 'divider',
+    },
+    {
+      label: '企业全称',
+      key: 'enterpriseName',
+      type: 'text',
+    },
+    {
+      label: '对公银行账号',
+      key: 'bankAccount',
+      type: 'text',
+    },
+    {
+      label: '对公银行名称',
+      key: 'bankName',
+      type: 'text',
+    },
+    {
+      label: '联系电话',
+      key: 'contactPhone',
+      type: 'text',
+    },
+    {
+      label: '联系地址',
+      key: 'contactAddress',
+      type: 'text',
+    },
+    {
+      label: '文件资料',
+      key: 'files',
+      type: 'file',
+    },
+  ],
+  // 7. 施工队审批
+  KEY_CONSTRUCTION_TEAM: [],
+  // 8. 项目分包/框架项目审批
+  KEY_DISTRIBUTION_PROJECT: [],
+  get KEY_FRAMEWORK_PROJECT() {
+    return this.KEY_DISTRIBUTION_PROJECT
+  },
+  // 9. 施工队合作审批
+  KEY_PROJECT_CO_OPERATION: [],
+  // 10. 施工队结算审批模块
+  KEY_SETTLEMENT: [],
+  // 11. 竣工资料审批
+  KEY_COMPLETION: [
+    {
+      label: '初始竣工资料',
+      key: 'initFile',
+      type: 'file',
     },
   ],
 }

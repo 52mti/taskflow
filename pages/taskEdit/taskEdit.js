@@ -5,6 +5,7 @@ import {
   getCustomer,
   getMaterial,
   getSupplier,
+  getConstructionTeam
 } from '../../utils/https'
 import { PaymentOrderBusinessType } from '../../utils/const'
 import request from '../../utils/request'
@@ -109,6 +110,13 @@ Page({
             })
             
         }
+
+        if (apiKey === 'AUDIT_FEES') {
+          return options.filter((item) => item.id !== '610560086649077760')
+        }
+        if (apiKey === 'supplier-type') {
+          return options
+        }
       }
 
       if (apiType === 'customer') {
@@ -126,10 +134,16 @@ Page({
         const options = res.data?.list || []
         return options
       }
+      if (apiType === 'constructionTeam') {
+        const res = await getConstructionTeam()
+        const options = res.data?.list || []
+        return options
+      }
       // 其他接口...
       return []
     }
-    const columns = await helper(apiType, apiKey).map((option) => ({ ...option, key: option.id, value: option.name }))
+    const rawData = await helper(apiType, apiKey)
+    const columns = rawData.map((option) => ({ ...option, key: option.id, value: option.name }))
 
     // 更新下拉选项的key:value映射表
     const pickerMap = columns.reduce((result, current) => {

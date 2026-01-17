@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"D:\\\\project\\\\taskflow\" status)",
+      "Bash(git -C \"D:\\\\project\\\\taskflow\" push origin main)"
+    ]
+  }
+}

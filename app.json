@@ -5,7 +5,8 @@
     "pages/taskList/taskList",
     "pages/taskDetail/taskDetail",
     "pages/taskEdit/taskEdit",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/reapplyProjectCooperation/reapplyProjectCooperation"
   ],
   "tabBar": {
     "custom": true,

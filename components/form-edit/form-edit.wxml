@@ -31,8 +31,8 @@
     <van-cell wx:elif="{{item.type === 'file'}}" required="{{item.required}}" title="{{item.label}}" direction="vertical">
       <view class="file-container">
         <view class="file-list">
-          <view class="file-item" wx:for="{{formData[item.key]}}" wx:for-item="file" wx:key="path">
-            <text data-path="{{file.path}}" bindtap="previewFile">{{file.name}}</text>
+          <view class="file-item" wx:for="{{utils.splitString(formData[item.key], ',')}}" wx:for-item="file" wx:key="path">
+            <text data-path="{{file}}" bindtap="previewFile">{{utils.deriveFileName(file)}}</text>
             <van-tag closeable type="primary" size="medium" catch:close="deleteFile" data-key="{{item.key}}" data-index="{{index}}" >
             </van-tag>
           </view>
@@ -88,3 +88,20 @@
     />
   </van-popup>
 </van-cell-group>
+
+<wxs module="utils">
+var splitString = function(str, separator) {
+  if (!str) return [];
+  return str.split(separator);
+}
+var deriveFileName = (function(url) {
+  if (!url) return ('file');;
+  var parts = url.split('_');
+  var fileName = parts[((nt_0 = (parts.length - 1), null == nt_0 ? undefined : 'number' === typeof nt_0 ? nt_0 : "" + nt_0))];
+  return (fileName || 'file')
+});
+module.exports = ({
+  deriveFileName: deriveFileName,
+  splitString: splitString,
+});
+</wxs>
