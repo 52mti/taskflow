@@ -49,3 +49,15 @@ export const getConstructionTeam = () => {
     },
   })
 }
+export const getUnitDetailList = (projectId) => {
+  return request({
+    method: 'POST',
+    url: '/project/unitDetail',
+    data: {
+      page: 1,
+      pageSize: 99,
+      projectId: projectId,
+      constructionTeamId: '$NULL$',
+    },
+  })
+}

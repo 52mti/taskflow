@@ -10,12 +10,13 @@
 
   <view style="height: 20px;"></view>
 
-  <custom-table 
-    tableBodyList="{{ tableBodyList }}" 
-    tableHeadList="{{ headerList }}" 
-    selectable="{{ true }}" 
+  <custom-table
+    tableBodyList="{{ tableBodyList }}"
+    tableHeadList="{{ headerList }}"
+    selectable="{{ true }}"
     bind:selectionChange="onSelectionChange"
     rowKey="id"
+    selectedIds="{{ selectedIds }}"
   />
 
   <van-popup show="{{ showSingle }}" position="bottom" bind:close="onCloseSinglePicker">

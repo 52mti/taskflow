@@ -1,14 +1,12 @@
+import { getConstructionTeam, getUnitDetailList } from '../../utils/https'
+
 Page({
   data: {
     // --- 单选数据 ---
     showSingle: false,
     loadingSingle: false,
-    singleColumns: [], // 格式: ['北京', '上海'] 或 [{text:'北京'}, ...]
-    selectedCity: '',
-
-    // --- 多选数据 ---
-    loadingMulti: false,
-    multiOptions: [], // 格式: [{id: 1, name: '篮球'}, ...]
+    singleColumns: [], // 格式: [{text:'施工队名称', id: '123'}, ...]
+    selectedTeamId: '', // 选中的施工队ID
 
     // --- 表格 ---
     headerList: [
@@ -21,75 +19,88 @@ Page({
         valueType: 'string',
       },
     ],
+    tableBodyList: [], // 表格数据
+    selectedIds: [], // 表格选中的行ID
   },
 
-  onLoad() {
-    // 页面加载时，可以预加载数据，或者点击时再加载
+  async onLoad(options) {
+    // 1. 解析路由传来的初始数据
+    let initialData = {}
+    if (options.initialData) {
+      try {
+        initialData = JSON.parse(decodeURIComponent(options.initialData))
+        this.__initialData = initialData
+      } catch (e) {
+        console.error('初始数据解析失败', e)
+      }
+    }
+
+    // 2. 处理 picker 的列表数据 - 来自 getConstructionTeam
+    let constructionTeams = []
+    try {
+      const res = await getConstructionTeam()
+      constructionTeams = res.data?.list || []
+    } catch (err) {
+      console.error('获取施工队列表失败', err)
+    }
+
+    const singleColumns = constructionTeams.map((item) => ({
+      text: item.name,
+      id: item.id,
+      ...item,
+    }))
+
+    // 3. 加载表格数据 - 来自 getUnitDetailList
+    let tableBodyList = []
+    try {
+      const res = await getUnitDetailList(initialData.projectId)
+      tableBodyList = res.data?.list || []
+    } catch (err) {
+      console.error('获取施工队列表失败', err)
+    }
+
+    // 4. 处理回显逻辑
+    // 回显选中的施工队名称
+    const selectedTeamId = initialData.constructionTeamId || ''
+
+    // 回显表格选中项 - 根据已有的合作施工队ID列表
+    const selectedIds = initialData.unitDetailList.map(unit => unit.id) || []
+
+    this.setData({
+      singleColumns,
+      tableBodyList,
+      selectedTeamId,
+      selectedIds,
+    })
   },
 
   // =========================
-  // 1. 单选 Picker 逻辑
+  // 单选 Picker 逻辑
   // =========================
   onOpenSinglePicker() {
     this.setData({ showSingle: true })
-    // 如果没有数据，请求接口
-    if (this.data.singleColumns.length === 0) {
-      this.fetchSingleData()
-    }
-  },
-
-  onSelectionChange(event) {
-    const { selectedIds, selectedRows } = event.detail;
-    console.log('表格选择变化，选中ID列表：', selectedIds);
-    console.log('表格选择变化，选中行数据：', selectedRows);
   },
 
   onCloseSinglePicker() {
     this.setData({ showSingle: false })
   },
 
-  // 模拟 API 请求城市数据
-  fetchSingleData() {
-    this.setData({ loadingSingle: true })
-    // 模拟网络延迟
-    setTimeout(() => {
-      const apiData = [
-        { text: '北京市', id: 101 },
-        { text: '上海市', id: 102 },
-        { text: '广州市', id: 103 },
-        { text: '深圳市', id: 104 },
-      ]
-      this.setData({
-        singleColumns: apiData,
-        loadingSingle: false,
-      })
-    }, 1000)
+  // =========================
+  // 表格选择逻辑
+  // =========================
+  onSelectionChange(event) {
+    const { selectedIds, selectedRows } = event.detail
+    console.log('表格选择变化，选中ID列表：', selectedIds)
+    console.log('表格选择变化，选中行数据：', selectedRows)
+    this.setData({ selectedIds })
   },
 
   onConfirmSingle(event) {
-    const { value } = event.detail // value 包含 {text, id}
+    const { value } = event.detail // value 包含 {text, id, ...}
     this.setData({
-      selectedCity: value.text,
+      selectedTeamId: value.id,
       showSingle: false,
     })
     console.log('单选结果：', value)
-  },
-
-  // 模拟 API 请求兴趣数据
-  fetchMultiData() {
-    this.setData({ loadingMulti: true })
-    setTimeout(() => {
-      const apiData = [
-        { id: '1', name: '编程' },
-        { id: '2', name: '阅读' },
-        { id: '3', name: '健身' },
-        { id: '4', name: '旅行' },
-        { id: '5', name: '摄影' },
-      ]
-      this.setData({
-        multiOptions: apiData,
-        loadingMulti: false,
-      })
-    }, 800)
   },
 })
