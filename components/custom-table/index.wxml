@@ -14,7 +14,7 @@
         </view>
       </view>
       <view class="table-row" wx:for="{{tableBodyList}}" wx:for-item="rowData" wx:for-index="rowIndex" wx:key="id">
-        <view catch:tap="noop"> 
+        <view wx:if="{{selectable}}" catch:tap="noop"> 
           <van-checkbox 
             value="{{ utils.isChecked(selectedList, rowData[rowKey]) }}" 
             data-id="{{ rowData[rowKey] }}" 
