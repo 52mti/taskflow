@@ -1,5 +1,12 @@
 {
   "dependencies": {
     "@vant/weapp": "^1.11.7"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix"
   }
 }
