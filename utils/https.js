@@ -101,28 +101,25 @@ export const getProjectList = (frameworkProjectId) => {
 }
 
 // 获取单位明细结算列表（根据项目ID和施工队ID）
-export const getUnitDetailSettlementList = (projectId, constructionTeamId) => {
+export const getUnitDetailSettlementList = () => {
   return request({
     method: 'POST',
     url: '/project/unitDetail',
     data: {
       page: 1,
       pageSize: 99,
-      projectId: projectId,
-      constructionTeamId: constructionTeamId,
     },
   })
 }
 
 // 获取施工队合作列表（根据项目ID）
-export const getConstructionTeamCooperateList = (projectId) => {
+export const getConstructionTeamCooperateList = () => {
   return request({
     method: 'POST',
     url: '/project/constructionTeamCooperate',
     data: {
       noFlow: true,
       pageSize: 99,
-      projectId: projectId,
       auditStatus: 1, // 已通过
     },
   })

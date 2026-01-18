@@ -115,9 +115,6 @@ Component({
       }
 
       this.triggerEvent('changeFormData', newFormData)
-
-      // 通知父组件可能需要刷新依赖的下拉选项
-      this.triggerEvent('pickerChange', { key, value: keyValuePair.key })
     },
 
     formatDate(date) {
