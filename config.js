@@ -10,7 +10,7 @@ const baseConfig = {
     baseUrl: 'https://admin.sh-zktx.com/apit',
   },
   release: {
-    baseUrl: 'https://admin.sh-zktx.com/apit',
+    baseUrl: 'https://admin.sh-zktx.com/api',
   },
 }
 
