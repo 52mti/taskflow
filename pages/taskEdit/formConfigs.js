@@ -353,16 +353,337 @@ export const configs = {
     },
   ],
   // 7. 施工队审批
-  KEY_CONSTRUCTION_TEAM: [],
+  KEY_CONSTRUCTION_TEAM: [
+    {
+      label: '基础信息',
+      type: 'divider',
+    },
+    {
+      label: '施工队编号',
+      key: 'code',
+      type: 'text',
+      disabled: true,
+      placeholder: '自动生成',
+    },
+    {
+      label: '施工队名称',
+      key: 'name',
+      type: 'text',
+      required: true,
+    },
+    {
+      label: '负责人',
+      key: 'chargePersonName',
+      type: 'text',
+      required: true,
+    },
+    {
+      label: '负责人联系方式',
+      key: 'chargePersonPhone',
+      type: 'text',
+      required: true,
+    },
+    {
+      label: '备注',
+      key: 'remarks',
+      type: 'textarea',
+      placeholder: '请输入备注',
+    },
+    {
+      label: '收款信息',
+      type: 'divider',
+    },
+    {
+      label: '企业全称',
+      key: 'enterpriseName',
+      type: 'text',
+    },
+    {
+      label: '对公银行账户',
+      key: 'bankAccount',
+      type: 'text',
+    },
+    {
+      label: '对公银行名称',
+      key: 'bankName',
+      type: 'text',
+    },
+    {
+      label: '联系电话',
+      key: 'contactPhone',
+      type: 'text',
+    },
+    {
+      label: '联系地址',
+      key: 'contactAddress',
+      type: 'text',
+    },
+    {
+      label: '人员信息',
+      type: 'divider',
+    },
+    {
+      type: 'tableForm',
+      tabList: [
+        {
+          key: 'constructionUserList',
+          title: '人员信息',
+          headerList: [
+            { key: 'name', value: '姓名', valueType: 'string' },
+            { key: 'sexName', value: '性别', valueType: 'string' },
+            { key: 'educationName', value: '学历', valueType: 'string' },
+            { key: 'idNo', value: '证件号码', valueType: 'string' },
+            { key: 'linkPhone', value: '联系方式', valueType: 'string' },
+            { key: 'workTypeName', value: '工种', valueType: 'string' },
+            { key: 'certificateTypeName', value: '证书类型', valueType: 'string' },
+            { key: 'certificateName', value: '证书名称', valueType: 'string' },
+            { key: 'certificateValidity', value: '证书有效期', valueType: 'string' },
+            { key: '', value: '操作', useSlot: true },
+          ],
+          formSchema: [
+            {
+              label: '姓名',
+              key: 'name',
+              type: 'text',
+              required: true,
+            },
+            {
+              label: '性别',
+              key: 'sexId',
+              type: 'dynamicPicker',
+              columns: [],
+              apiType: 'dictionary',
+              apiKey: 'FACULTY_GENDER',
+            },
+            {
+              label: '学历',
+              key: 'education',
+              type: 'dynamicPicker',
+              columns: [],
+              apiType: 'dictionary',
+              apiKey: 'EDUCATION_TYPE',
+            },
+            {
+              label: '证件号码',
+              key: 'idNo',
+              type: 'text',
+            },
+            {
+              label: '联系方式',
+              key: 'linkPhone',
+              type: 'text',
+              required: true,
+            },
+            {
+              label: '工种',
+              key: 'workType',
+              type: 'dynamicPicker',
+              columns: [],
+              apiType: 'dictionary',
+              apiKey: 'trade',
+            },
+            {
+              label: '证书类型',
+              key: 'certificateType',
+              type: 'dynamicPicker',
+              columns: [],
+              apiType: 'dictionary',
+              apiKey: 'CERTIFICATE_TYPE',
+            },
+            {
+              label: '证书名称',
+              key: 'certificateName',
+              type: 'dynamicPicker',
+              columns: [],
+              apiType: 'dictionary',
+              apiKey: 'QUALIFICATION_CERTIFICATE',
+            },
+            {
+              label: '证书有效期',
+              key: 'certificateValidity',
+              type: 'date',
+            },
+            {
+              label: '证书文件',
+              key: 'certificateFile',
+              type: 'file',
+            },
+          ],
+        },
+      ],
+      label: '人员信息',
+      key: 'constructionUserList',
+    },
+  ],
   // 8. 分配项目/框架项目审批
-  KEY_DISTRIBUTION_PROJECT: [],
+  KEY_DISTRIBUTION_PROJECT: [
+    {
+      label: '招投标名称',
+      key: 'biddingId',
+      type: 'dynamicPicker',
+      columns: [],
+      apiType: 'bidding',
+    },
+    {
+      label: '客户名称',
+      key: 'customerId',
+      type: 'dynamicPicker',
+      columns: [],
+      required: true,
+      apiType: 'customer',
+    },
+    {
+      label: '项目类型',
+      key: 'projectType',
+      type: 'picker',
+      required: true,
+      columns: [
+        { key: 0, value: '框架项目' },
+        { key: 1, value: '单项项目' },
+      ],
+    },
+    {
+      label: '项目名称',
+      key: 'name',
+      type: 'text',
+      required: true,
+    },
+    {
+      label: '备注',
+      key: 'remark',
+      type: 'textarea',
+      placeholder: '请输入备注',
+    },
+  ],
   get KEY_FRAMEWORK_PROJECT() {
     return this.KEY_DISTRIBUTION_PROJECT
   },
   // 9. 施工队合作审批（额外调转页面）
   KEY_PROJECT_CO_OPERATION: [],
   // 10. 施工队结算审批模块
-  KEY_SETTLEMENT: [],
+  KEY_SETTLEMENT: [
+    {
+      label: '施工队名称',
+      key: 'constructionTeamId',
+      type: 'dynamicPicker',
+      columns: [],
+      required: true,
+      apiType: 'constructionTeamCooperate',
+      onPickerConfirm: (row, formModel) => {
+        if (formModel) {
+          formModel.constructionTeamName = row.label
+          formModel.discountRate = row.discountRate
+        }
+      },
+    },
+    {
+      label: '折扣率',
+      key: 'discountRate',
+      type: 'number',
+      disabled: true,
+    },
+    {
+      label: '应结算金额',
+      key: 'shouldSettlementAmount',
+      type: 'number',
+      disabled: true,
+    },
+    {
+      label: '已结算金额',
+      key: 'alreadySettlementAmount',
+      type: 'number',
+      disabled: true,
+    },
+    {
+      label: '本次最终结算金额',
+      key: 'finalSettlementAmount',
+      type: 'number',
+      disabled: true,
+    },
+    {
+      label: '本次申请结算金额',
+      key: 'applySettlementAmount',
+      type: 'number',
+    },
+    {
+      type: 'tableForm',
+      tabList: [
+        {
+          key: 'unitDetailSettlementList',
+          title: '结算明细',
+          headerList: [
+            { key: 'unitDetailName', value: '单位明细', valueType: 'string' },
+            { key: 'constructionFee', value: '单位明细费用', valueType: 'amount' },
+            { key: 'discountRate', value: '折扣率', valueType: 'percent' },
+            { key: 'shouldSettlementAmount', value: '单位应结算金额', valueType: 'amount' },
+            { key: 'alreadySettlementAmount', value: '已结算金额', valueType: 'amount' },
+            { key: 'unsettledAmount', value: '未结算金额', valueType: 'amount' },
+            { key: 'applySettlementAmount', value: '本次申请结算金额', valueType: 'amount' },
+            { key: '', value: '操作', useSlot: true },
+          ],
+          formSchema: [
+            {
+              label: '单位明细',
+              key: 'unitDetailId',
+              type: 'dynamicPicker',
+              columns: [],
+              required: true,
+              apiType: 'unitDetailSettlement',
+              onPickerConfirm: (row, formModel) => {
+                if (formModel) {
+                  formModel.unitDetailName = row.label
+                  formModel.constructionFee = row.constructionFee
+                  formModel.discountRate = row.discountRate
+                  formModel.settlementAmount = row.settlementAmount || 0
+                  formModel.alreadySettlementAmount = row.alreadySettlementAmount
+                  formModel.shouldSettlementAmount = row.shouldSettlementAmount
+                  formModel.unsettledAmount = row.unsettledAmount
+                }
+              },
+            },
+            {
+              label: '单位明细费用',
+              key: 'constructionFee',
+              type: 'number',
+              disabled: true,
+            },
+            {
+              label: '折扣率',
+              key: 'discountRate',
+              type: 'number',
+              required: true,
+            },
+            {
+              label: '单位应结算金额',
+              key: 'shouldSettlementAmount',
+              type: 'number',
+              disabled: true,
+            },
+            {
+              label: '已结算金额',
+              key: 'alreadySettlementAmount',
+              type: 'number',
+              disabled: true,
+            },
+            {
+              label: '未结算金额',
+              key: 'unsettledAmount',
+              type: 'number',
+              disabled: true,
+            },
+            {
+              label: '本次申请结算金额',
+              key: 'applySettlementAmount',
+              type: 'number',
+              required: true,
+            },
+          ],
+        },
+      ],
+      label: '结算明细',
+      key: 'unitDetailSettlementList',
+    },
+  ],
   // 11. 竣工资料审批
   KEY_COMPLETION: [
     {

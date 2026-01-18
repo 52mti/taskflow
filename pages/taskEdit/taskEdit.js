@@ -5,7 +5,12 @@ import {
   getCustomer,
   getMaterial,
   getSupplier,
-  getConstructionTeam
+  getConstructionTeam,
+  getBiddingList,
+  getFrameworkProjectList,
+  getProjectList,
+  getUnitDetailSettlementList,
+  getConstructionTeamCooperateList
 } from '../../utils/https'
 import { PaymentOrderBusinessType } from '../../utils/const'
 import request from '../../utils/request'
@@ -52,6 +57,48 @@ Page({
   // 处理表单数据变化
   onChangeFormData(e) {
     this.setData({ formData: e.detail })
+  },
+
+  // 处理 picker 选择变化，刷新依赖的下拉选项
+  async onPickerChange(e) {
+    const { key } = e.detail
+    const { formItems } = this.data
+
+    // 定义依赖关系映射：当某个字段变化时，需要刷新哪些字段的选项
+    const dependencyMap = {
+      frameworkProjectId: ['projectId'],  // 框架项目变化 -> 刷新订单列表
+      projectId: ['constructionTeamId'],  // 订单变化 -> 刷新施工队合作列表
+      constructionTeamId: ['unitDetailSettlementList'],  // 施工队变化 -> 刷新单位明细列表
+    }
+
+    const dependentKeys = dependencyMap[key]
+    if (!dependentKeys || dependentKeys.length === 0) return
+
+    // 清空依赖字段的值和选项
+    const newFormData = { ...this.data.formData }
+    dependentKeys.forEach(depKey => {
+      newFormData[depKey] = undefined
+    })
+    this.setData({ formData: newFormData })
+
+    // 刷新依赖字段的下拉选项
+    const updatedItems = [...formItems]
+    for (const depKey of dependentKeys) {
+      const itemIndex = updatedItems.findIndex(item => item.key === depKey)
+      if (itemIndex === -1) continue
+
+      const item = updatedItems[itemIndex]
+      if (item.type === 'dynamicPicker' && item.apiType) {
+        try {
+          item.columns = await this.fetchDataByApi(item.apiType, item.apiKey)
+        } catch (err) {
+          console.error(`刷新 ${item.label} 选项失败`, err)
+          item.columns = []
+        }
+      }
+    }
+
+    this.setData({ formItems: updatedItems })
   },
 
   async initDynamicColumns() {
@@ -137,6 +184,46 @@ Page({
       }
       if (apiType === 'constructionTeam') {
         const res = await getConstructionTeam()
+        const options = res.data?.list || []
+        return options
+      }
+      if (apiType === 'bidding') {
+        const res = await getBiddingList()
+        const options = res.data?.list || []
+        return options
+      }
+      if (apiType === 'frameworkProject') {
+        const res = await getFrameworkProjectList()
+        const options = res.data?.list || []
+        return options
+      }
+      if (apiType === 'project') {
+        // 需要根据框架项目ID获取订单列表
+        const frameworkProjectId = this.data.formData.frameworkProjectId
+        if (!frameworkProjectId) return []
+        const res = await getProjectList(frameworkProjectId)
+        const options = res.data?.list || []
+        return options
+      }
+      if (apiType === 'constructionTeamCooperate') {
+        // 需要根据项目ID获取施工队合作列表
+        const projectId = this.data.formData.projectId
+        if (!projectId) return []
+        const res = await getConstructionTeamCooperateList(projectId)
+        const options = res.data?.list || []
+        // 映射字段：constructionTeamId -> id, constructionTeamName -> name
+        return options.map(item => ({
+          ...item,
+          id: item.constructionTeamId,
+          name: item.constructionTeamName,
+        }))
+      }
+      if (apiType === 'unitDetailSettlement') {
+        // 需要根据项目ID和施工队ID获取单位明细列表
+        const projectId = this.data.formData.projectId
+        const constructionTeamId = this.data.formData.constructionTeamId
+        if (!projectId || !constructionTeamId) return []
+        const res = await getUnitDetailSettlementList(projectId, constructionTeamId)
         const options = res.data?.list || []
         return options
       }

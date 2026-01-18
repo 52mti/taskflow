@@ -98,13 +98,26 @@ Component({
     onPickerConfirm(e) {
       const keyValuePair = e.detail.value
       const key = this.data.currentPickerKey
+      const item = this.properties.formItems.find((i) => i.key === key)
+
       this.setData({
         showPicker: false,
       })
-      this.triggerEvent('changeFormData', {
+
+      const newFormData = {
         ...this.properties.formData,
         [key]: keyValuePair.key,
-      })
+      }
+
+      // 调用配置中的 onPickerConfirm 回调
+      if (item && typeof item.onPickerConfirm === 'function') {
+        item.onPickerConfirm(keyValuePair, newFormData)
+      }
+
+      this.triggerEvent('changeFormData', newFormData)
+
+      // 通知父组件可能需要刷新依赖的下拉选项
+      this.triggerEvent('pickerChange', { key, value: keyValuePair.key })
     },
 
     formatDate(date) {

@@ -1220,7 +1220,7 @@ const CONFIG_MAP = {
       {
         text: '重新提交',
         action: 'handleReapply',
-        actionPayload: { type: 'KEY_PAYMENT_ORDER' },
+        actionPayload: { type: 'KEY_SETTLEMENT' },
         plain: true,
         type: 'default',
         isVisible: showReapplyBtn,
