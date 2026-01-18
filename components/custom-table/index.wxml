@@ -41,14 +41,31 @@
   <van-empty description="暂无数据" wx:if="{{tableBodyList.length===0}}"></van-empty>
 </view>
 <wxs module="utils">
+var formatNumber = function(n) {
+  if (n === null || n === undefined) return '';
+  
+  var str = n.toString();
+  // 使用正则给整数部分加千分位
+  var reg = getRegExp('(\d)(?=(\d{3})+\.)', 'g'); 
+  // 注意：WXS中正则语法略有不同，若不含小数需调整正则
+  // 简单通用版（支持整数和小数）：
+  var parts = str.split('.');
+  var integer = parts[0];
+  var decimal = parts.length > 1 ? '.' + parts[1] : '';
+  
+  var regInt = getRegExp('(\d)(?=(\d{3})+$)', 'g');
+  integer = integer.replace(regInt, '$1,');
+  
+  return integer + decimal;
+}
 var formatValue = (function(val, valueType) {
   if (valueType === 'amount') {
     if (!val || val === '0') {
       return ('￥0')
     };
-    return ('￥' + val.toLocaleString())
+    return ('￥' + formatNumber(val))
   };
-  if (valueType === 'rate') {
+  if (valueType === 'rate' || valueType === 'percent') {
     if (!val || val === '0') {
       return ('0%')
     };

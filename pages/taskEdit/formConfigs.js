@@ -199,7 +199,7 @@ export const configs = {
                 if (formModel) {
                   formModel.specification = row.specification
                   formModel.unit = row.unit
-                  formModel.materialName = row.label
+                  formModel.materialName = row.value || row.name || row.label
                   formModel.price = row.price
                 }
               },
@@ -242,7 +242,7 @@ export const configs = {
               apiType: 'supplier',
               onPickerConfirm: (row, formModel) => {
                 if (formModel) {
-                  formModel.supplierName = row.label
+                  formModel.supplierName = row.value || row.name || row.label
                 }
               },
             },
@@ -430,7 +430,7 @@ export const configs = {
           title: '人员信息',
           headerList: [
             { key: 'name', value: '姓名', valueType: 'string' },
-            { key: 'sexName', value: '性别', valueType: 'string' },
+            { key: 'sexId', value: '性别', valueType: 'string' },
             { key: 'educationName', value: '学历', valueType: 'string' },
             { key: 'idNo', value: '证件号码', valueType: 'string' },
             { key: 'linkPhone', value: '联系方式', valueType: 'string' },
@@ -571,7 +571,7 @@ export const configs = {
       apiType: 'constructionTeamCooperate',
       onPickerConfirm: (row, formModel) => {
         if (formModel) {
-          formModel.constructionTeamName = row.label
+          formModel.constructionTeamName = row.value || row.name || row.label
           formModel.discountRate = row.discountRate
         }
       },
@@ -612,7 +612,7 @@ export const configs = {
           key: 'unitDetailSettlementList',
           title: '结算明细',
           headerList: [
-            { key: 'unitDetailName', value: '单位明细', valueType: 'string' },
+            { key: 'unitDetailId', value: '单位明细', valueType: 'string' },
             { key: 'constructionFee', value: '单位明细费用', valueType: 'amount' },
             { key: 'discountRate', value: '折扣率', valueType: 'percent' },
             { key: 'shouldSettlementAmount', value: '单位应结算金额', valueType: 'amount' },
@@ -631,7 +631,7 @@ export const configs = {
               apiType: 'unitDetailSettlement',
               onPickerConfirm: (row, formModel) => {
                 if (formModel) {
-                  formModel.unitDetailName = row.label
+                  formModel.unitDetailName = row.value || row.name || row.label
                   formModel.constructionFee = row.constructionFee
                   formModel.discountRate = row.discountRate
                   formModel.settlementAmount = row.settlementAmount || 0

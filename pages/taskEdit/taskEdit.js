@@ -126,7 +126,22 @@ Page({
           return options.filter((item) => item.id !== '610560086649077760')
         }
         if (apiKey === 'supplier-type') {
-        return options
+          return options
+        }
+        if (apiKey === 'FACULTY_GENDER') {
+          return options
+        }
+        if (apiKey === 'EDUCATION_TYPE') {
+          return options
+        }
+        if (apiKey === 'trade') {
+          return options
+        }
+        if (apiKey === 'CERTIFICATE_TYPE') {
+          return options
+        }
+        if (apiKey === 'QUALIFICATION_CERTIFICATE') {
+          return options
         }
       }
 

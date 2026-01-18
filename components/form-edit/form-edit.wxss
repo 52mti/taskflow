@@ -91,3 +91,20 @@ page {
   font-size: 28rpx !important;
   font-weight: bold !important;
 }
+
+/* popup弹窗样式 */
+.popup-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.popup-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 120rpx;
+}
+
+.popup-footer {
+  padding-bottom: env(safe-area-inset-bottom);
+}

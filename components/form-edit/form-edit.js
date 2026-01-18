@@ -45,17 +45,81 @@ Component({
 
     // popup数据
     showPopup: false,
+    currentTableFormItem: null, // 当前操作的tableForm配置项
+    currentEditIndex: -1, // 当前编辑的数据索引，-1表示新增
   },
 
   methods: {
-    handleAddForm() {
+    // 打开popup添加表单
+    handleAddForm(e) {
+      const { item } = e.currentTarget.dataset
+      const { activeTab } = this.data
+      const key = item.tabList[activeTab].key
+      const currentList = this.properties.formData[key] || []
+      // 新增一条空数据到数组末尾
+      const newList = [...currentList, {}]
+      const newIndex = newList.length - 1
+
+      this.triggerEvent('changeFormData', {
+        ...this.properties.formData,
+        [key]: newList,
+      })
+
       this.setData({
         showPopup: true,
+        currentTableFormItem: item,
+        currentEditIndex: newIndex,
       })
     },
 
+    // popup关闭回调
     onPopupClose() {
       this.setData({ showPopup: false })
+    },
+
+    // popup中的表单数据变化 - 实时同步到formData
+    onPopupFormDataChange(e) {
+      const { currentTableFormItem, activeTab, currentEditIndex } = this.data
+      if (!currentTableFormItem || currentEditIndex < 0) return
+
+      const key = currentTableFormItem.tabList[activeTab].key
+      const currentList = [...(this.properties.formData[key] || [])]
+      currentList[currentEditIndex] = e.detail
+
+      this.triggerEvent('changeFormData', {
+        ...this.properties.formData,
+        [key]: currentList,
+      })
+    },
+
+    // popup取消按钮 - 删除新增的空数据
+    onPopupCancel() {
+      const { currentTableFormItem, activeTab, currentEditIndex } = this.data
+
+      if (currentTableFormItem && currentEditIndex >= 0) {
+        const key = currentTableFormItem.tabList[activeTab].key
+        const currentList = [...(this.properties.formData[key] || [])]
+        // 删除新增的那条数据
+        currentList.splice(currentEditIndex, 1)
+
+        this.triggerEvent('changeFormData', {
+          ...this.properties.formData,
+          [key]: currentList,
+        })
+      }
+
+      this.setData({
+        showPopup: false,
+        currentEditIndex: -1,
+      })
+    },
+
+    // popup确认按钮 - 数据已实时同步，只需关闭popup
+    onPopupConfirm() {
+      this.setData({
+        showPopup: false,
+        currentEditIndex: -1,
+      })
     },
 
     // 处理输入框变化

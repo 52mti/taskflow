@@ -55,7 +55,7 @@
         </van-tab>
       </van-tabs>
       <block wx:else>
-        <van-button class="add-btn" type="info" bind:click="handleAddForm">添加{{item.label}}</van-button>
+        <van-button class="add-btn" type="info" bind:click="handleAddForm" data-item="{{item}}">添加{{item.label}}</van-button>
         <custom-table tableBodyList="{{formData[item.tabList[0].key]}}" tableHeadList="{{item.tabList[0].headerList}}">
           <view slot="action">
             <van-button size="mini" type="info" bindtap="onEdit">修改</van-button>
@@ -63,15 +63,6 @@
           </view>
         </custom-table>
       </block>
-      <!-- 修改弹窗 -->
-      <van-popup show="{{ showPopup }}" custom-style="width: 100%; height: 100%;" position="right" bind:close="onPopupClose">
-        <van-nav-bar
-          title="标题"
-          left-arrow
-          bind:click-left="onPopupClose"
-        />
-        <form-edit form-items="{{item.tabList[activeTab].formSchema}}" form-data="{{formData[item.tabList[activeTab].key][activeTab]}}" data-index="{{activeTab}}" data-key="{{item.tabList[activeTab].key}}" bind:childEvent="handleChildEvent"></form-edit>
-      </van-popup>
     </view>
   </block>
 
@@ -86,6 +77,30 @@
       bind:confirm="onPickerConfirm"
       bind:cancel="onPickerClose"
     />
+  </van-popup>
+
+  <!-- 添加/编辑弹窗 -->
+  <van-popup show="{{ showPopup }}" custom-style="width: 100%; height: 100%;" position="right" bind:close="onPopupCancel">
+    <view class="popup-container">
+      <van-nav-bar
+        title="{{currentTableFormItem.label || '添加'}}"
+        left-arrow
+        bind:click-left="onPopupCancel"
+      />
+      <view class="popup-content">
+        <form-edit
+          wx:if="{{currentTableFormItem && currentEditIndex >= 0}}"
+          form-items="{{currentTableFormItem.tabList[activeTab].formSchema}}"
+          form-data="{{formData[currentTableFormItem.tabList[activeTab].key][currentEditIndex]}}"
+          picker-map="{{pickerMap}}"
+          bind:changeFormData="onPopupFormDataChange"
+        />
+      </view>
+      <van-goods-action class="popup-footer">
+        <van-goods-action-button type="warning" text="取消" bind:click="onPopupCancel" />
+        <van-goods-action-button type="primary" text="确认" bind:click="onPopupConfirm" />
+      </van-goods-action>
+    </view>
   </van-popup>
 </van-cell-group>
 
