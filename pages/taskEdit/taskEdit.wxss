@@ -35,9 +35,14 @@
   margin-right: 12px;
 }
 
+.nav-bar {
+  z-index: 0 !important;
+}
+
 .van-goods-action {
   padding: 10rpx;
   position: static !important;
+  z-index: 0 !important;
   background-color: transparent;
 }
 

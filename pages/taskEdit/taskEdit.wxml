@@ -1,14 +1,14 @@
 <view class="page-wrapper">
   <van-nav-bar
     title="重新提交"
-    left-arrow
+    class="nav-bar"
     bind:click-left="onCancel"
   />
   <scroll-view scroll-y class="content-scroll">
     <form-edit form-items="{{formItems}}" form-data="{{formData}}" bind:changeFormData="onChangeFormData" bind:pickerChange="onPickerChange" picker-map="{{pickerMap}}"></form-edit>
   </scroll-view>
 
-  <van-goods-action>
+  <van-goods-action class="van-goods-action">
     <van-goods-action-button
       text="取消"
       type="warning"
