@@ -1,6 +1,6 @@
 <view class="page-wrapper">
   <van-nav-bar
-    title="标题"
+    title="重新提交"
     left-arrow
     bind:click-left="onCancel"
   />

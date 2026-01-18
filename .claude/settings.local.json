@@ -5,7 +5,8 @@
       "Bash(git -C \"D:\\\\project\\\\taskflow\" push origin main)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nfix: uploadFiles按钮添加showAuditBtn权限校验\n\n为所有action为uploadFiles的按钮isVisible函数添加showAuditBtn校验，\n确保只有当前操作人且任务状态为待审批时才显示上传按钮。\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git push)"
+      "Bash(git push)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: 为form-edit组件popup确认添加必填校验\n\n在onPopupConfirm方法中增加必填字段校验逻辑，\n校验不通过时显示Toast提示并阻止关闭弹窗\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }

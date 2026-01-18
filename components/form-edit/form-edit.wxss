@@ -106,5 +106,6 @@ page {
 }
 
 .popup-footer {
+  position: static !important;
   padding-bottom: env(safe-area-inset-bottom);
 }
