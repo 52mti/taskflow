@@ -114,8 +114,36 @@ Component({
       })
     },
 
-    // popup确认按钮 - 数据已实时同步，只需关闭popup
+    // popup确认按钮 - 校验必填字段后关闭popup
     onPopupConfirm() {
+      const { currentTableFormItem, activeTab, currentEditIndex } = this.data
+      if (!currentTableFormItem || currentEditIndex < 0) {
+        this.setData({ showPopup: false, currentEditIndex: -1 })
+        return
+      }
+
+      // 获取当前表单配置和数据
+      const formSchema = currentTableFormItem.tabList[activeTab].formSchema || []
+      const key = currentTableFormItem.tabList[activeTab].key
+      const currentData = this.properties.formData[key]?.[currentEditIndex] || {}
+
+      // 校验必填字段
+      const requiredFields = formSchema.filter(item => item.required)
+      for (const field of requiredFields) {
+        const value = currentData[field.key]
+        // 判断是否为空：undefined、null、空字符串、空数组
+        const isEmpty = value === undefined || value === null || value === '' ||
+          (Array.isArray(value) && value.length === 0)
+
+        if (isEmpty) {
+          wx.showToast({
+            title: `${field.label}不能为空`,
+            icon: 'none'
+          })
+          return
+        }
+      }
+
       this.setData({
         showPopup: false,
         currentEditIndex: -1,
